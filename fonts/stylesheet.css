@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'PAGKAKI';
+    src: url('PAGKAKI-Regular.eot');
+    src: local('PAGKAKI Regular'), local('PAGKAKI-Regular'),
+        url('PAGKAKI-Regular.eot?#iefix') format('embedded-opentype'),
+        url('PAGKAKI-Regular.woff2') format('woff2'),
+        url('PAGKAKI-Regular.woff') format('woff'),
+        url('PAGKAKI-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
