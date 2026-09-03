@@ -3263,12 +3263,131 @@
       color: #B83265;
     }
 
+    .bulletin-modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      padding-right: 32px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .bulletin-modal-name {
       font-family: 'Press Start 2P', monospace;
       font-size: 9px;
       color: #E04B84;
       letter-spacing: 1px;
-      margin-bottom: 4px;
+    }
+
+    .bulletin-delete-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7.5px;
+      color: #FFFFFF;
+      background: #D32F2F;
+      border: 1.5px solid #281B22;
+      box-shadow: 0 2px 0 #281B22;
+      border-radius: 4px;
+      padding: 5px 9px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
+      user-select: none;
+    }
+
+    .bulletin-delete-btn:hover {
+      background: #B71C1C;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 #281B22;
+    }
+
+    .bulletin-delete-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #281B22;
+    }
+
+    .bulletin-delete-confirm {
+      background: #FFEBEE;
+      border: 2px dashed #D32F2F;
+      border-radius: 5px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DotGothic16', sans-serif;
+      font-size: 15px;
+      color: #B71C1C;
+      animation: noteSlideIn 0.15s ease;
+    }
+
+    .bulletin-confirm-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .bulletin-confirm-yes {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      color: #FFFFFF;
+      background: #D32F2F;
+      border: 1px solid #281B22;
+      border-radius: 3px;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .bulletin-confirm-yes:hover {
+      background: #B71C1C;
+    }
+
+    .bulletin-confirm-no {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      color: #281B22;
+      background: #FFFFFF;
+      border: 1px solid #281B22;
+      border-radius: 3px;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .bulletin-note-you {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 6px;
+      color: #FFFFFF;
+      background: #E04B84;
+      padding: 2px 4px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .bulletin-reply-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+
+    .bulletin-reply-delete-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 6.5px;
+      color: #D32F2F;
+      background: none;
+      border: 1px solid #FFCDD2;
+      border-radius: 3px;
+      padding: 2px 5px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .bulletin-reply-delete-btn:hover {
+      background: #D32F2F;
+      color: #FFFFFF;
+      border-color: #B71C1C;
     }
 
     .bulletin-modal-time {
@@ -4676,7 +4795,19 @@
   <div id="bulletin-modal">
     <div class="bulletin-modal-content">
       <button class="bulletin-modal-close" id="bulletin-modal-close">✕</button>
-      <div class="bulletin-modal-name" id="bm-name"></div>
+      <div class="bulletin-modal-top">
+        <div class="bulletin-modal-name" id="bm-name"></div>
+        <button class="bulletin-delete-btn" id="bm-delete-btn" style="display:none;" title="Delete this post">
+          🗑️ DELETE POST
+        </button>
+      </div>
+      <div id="bm-delete-confirm" class="bulletin-delete-confirm" style="display:none;">
+        <span>Delete this message?</span>
+        <div class="bulletin-confirm-btns">
+          <button class="bulletin-confirm-yes" id="bm-confirm-yes">YES</button>
+          <button class="bulletin-confirm-no" id="bm-confirm-no">CANCEL</button>
+        </div>
+      </div>
       <div class="bulletin-modal-time" id="bm-time"></div>
       <div class="bulletin-modal-msg" id="bm-msg"></div>
       <hr class="bulletin-modal-divider">
@@ -6434,6 +6565,45 @@
     let bulletinSelectedEmoji = '🍓';
     let bulletinCooldownRAF = null;
 
+    /* ── LocalStorage Post & Reply Ownership ── */
+    function getMyBulletinPosts() {
+      try { return JSON.parse(localStorage.getItem('swift_my_posts') || '[]'); } catch (e) { return []; }
+    }
+    function saveMyBulletinPost(key) {
+      if (!key) return;
+      const list = getMyBulletinPosts();
+      if (!list.includes(key)) {
+        list.push(key);
+        try { localStorage.setItem('swift_my_posts', JSON.stringify(list)); } catch (e) {}
+      }
+    }
+    function removeMyBulletinPost(key) {
+      const list = getMyBulletinPosts().filter(k => k !== key);
+      try { localStorage.setItem('swift_my_posts', JSON.stringify(list)); } catch (e) {}
+    }
+    function isMyBulletinPost(key) {
+      return getMyBulletinPosts().includes(key);
+    }
+
+    function getMyBulletinReplies() {
+      try { return JSON.parse(localStorage.getItem('swift_my_replies') || '[]'); } catch (e) { return []; }
+    }
+    function saveMyBulletinReply(key) {
+      if (!key) return;
+      const list = getMyBulletinReplies();
+      if (!list.includes(key)) {
+        list.push(key);
+        try { localStorage.setItem('swift_my_replies', JSON.stringify(list)); } catch (e) {}
+      }
+    }
+    function removeMyBulletinReply(key) {
+      const list = getMyBulletinReplies().filter(k => k !== key);
+      try { localStorage.setItem('swift_my_replies', JSON.stringify(list)); } catch (e) {}
+    }
+    function isMyBulletinReply(key) {
+      return getMyBulletinReplies().includes(key);
+    }
+
     /* ── Sanitize: hapus semua HTML tag, cegah XSS ── */
     function sanitizeText(str) {
       const d = document.createElement('div');
@@ -6484,6 +6654,13 @@
       const nameEl = document.createElement('span');
       nameEl.className = 'bulletin-note-name';
       nameEl.textContent = (data.name || 'Player').toUpperCase().slice(0, 24);
+
+      if (isMyBulletinPost(msgKey)) {
+        const youTag = document.createElement('span');
+        youTag.className = 'bulletin-note-you';
+        youTag.textContent = 'YOU';
+        nameEl.appendChild(youTag);
+      }
 
       const timeEl = document.createElement('span');
       timeEl.className = 'bulletin-note-time';
@@ -6655,8 +6832,11 @@
       };
 
       /* Push to Firebase */
-      bulletinDb.ref('bulletin/messages').push(payload)
+      const newPostRef = bulletinDb.ref('bulletin/messages').push();
+      const newPostKey = newPostRef.key;
+      newPostRef.set(payload)
         .then(() => {
+          saveMyBulletinPost(newPostKey);
           document.getElementById('bulletin-msg').value = '';
           document.getElementById('bulletin-wordcount').textContent = '0 / 30 chars';
           document.getElementById('bulletin-wordcount').classList.remove('warn');
@@ -6738,6 +6918,34 @@
       document.getElementById('bm-time').textContent = formatTime(data.ts || Date.now());
       document.getElementById('bm-msg').textContent = data.msg || '';
 
+      /* Delete button setup */
+      const deleteBtn = document.getElementById('bm-delete-btn');
+      const deleteConfirm = document.getElementById('bm-delete-confirm');
+      if (deleteConfirm) deleteConfirm.style.display = 'none';
+
+      if (deleteBtn) {
+        if (isMyBulletinPost(msgKey)) {
+          deleteBtn.style.display = 'inline-flex';
+          deleteBtn.onclick = () => {
+            if (deleteConfirm) deleteConfirm.style.display = 'flex';
+          };
+        } else {
+          deleteBtn.style.display = 'none';
+        }
+      }
+
+      /* Confirm delete buttons */
+      const confirmYes = document.getElementById('bm-confirm-yes');
+      const confirmNo = document.getElementById('bm-confirm-no');
+      if (confirmYes) {
+        confirmYes.onclick = () => executeDeletePost(msgKey);
+      }
+      if (confirmNo) {
+        confirmNo.onclick = () => {
+          if (deleteConfirm) deleteConfirm.style.display = 'none';
+        };
+      }
+
       /* Reset reply input */
       const replyInput = document.getElementById('bm-reply-input');
       const replyCount = document.getElementById('bm-reply-count');
@@ -6776,6 +6984,8 @@
     function closeBulletinModal() {
       if (typeof sfxModalClose !== 'undefined') sfxModalClose();
       document.getElementById('bulletin-modal').classList.remove('show');
+      const deleteConfirm = document.getElementById('bm-delete-confirm');
+      if (deleteConfirm) deleteConfirm.style.display = 'none';
       /* Restore scroll — remove scrollbar compensation */
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
@@ -6788,6 +6998,36 @@
       }
     }
 
+    /* ── Execute Delete Post ── */
+    function executeDeletePost(msgKey) {
+      if (!bulletinDb || !msgKey) return;
+      bulletinDb.ref(`bulletin/messages/${msgKey}`).remove()
+        .then(() => {
+          removeMyBulletinPost(msgKey);
+          if (typeof sfxModalClose !== 'undefined') sfxModalClose();
+          closeBulletinModal();
+          setBulletinStatus('[OK] Message deleted!', 'ok');
+          setTimeout(() => setBulletinStatus(''), 2500);
+        })
+        .catch(err => {
+          console.error('Delete error:', err);
+          alert('Failed to delete message.');
+        });
+    }
+
+    /* ── Execute Delete Reply ── */
+    function executeDeleteReply(msgKey, replyKey) {
+      if (!bulletinDb || !msgKey || !replyKey) return;
+      bulletinDb.ref(`bulletin/messages/${msgKey}/replies/${replyKey}`).remove()
+        .then(() => {
+          removeMyBulletinReply(replyKey);
+          if (typeof sfxModalClose !== 'undefined') sfxModalClose();
+        })
+        .catch(err => {
+          console.error('Delete reply error:', err);
+        });
+    }
+
     /* ── Render replies list inside modal ── */
     function renderModalReplies(raw) {
       const list = document.getElementById('bm-replies-list');
@@ -6797,15 +7037,33 @@
         list.innerHTML = '<div class="bulletin-reply-empty">No replies yet. Start the thread!</div>';
         return;
       }
-      Object.values(raw)
+      Object.entries(raw)
+        .map(([rKey, rVal]) => ({ rKey, ...rVal }))
         .sort((a, b) => (a.ts || 0) - (b.ts || 0))
         .forEach(r => {
           const item = document.createElement('div');
           item.className = 'bulletin-reply-item';
 
+          const rHeader = document.createElement('div');
+          rHeader.className = 'bulletin-reply-header';
+
           const rName = document.createElement('div');
           rName.className = 'bulletin-reply-name';
           rName.textContent = (r.name || 'Player').toUpperCase();
+          rHeader.appendChild(rName);
+
+          if (isMyBulletinReply(r.rKey)) {
+            const delReplyBtn = document.createElement('button');
+            delReplyBtn.className = 'bulletin-reply-delete-btn';
+            delReplyBtn.textContent = '✕ DELETE';
+            delReplyBtn.title = 'Delete this reply';
+            delReplyBtn.onclick = () => {
+              if (confirm('Delete your reply?')) {
+                executeDeleteReply(bulletinModalKey, r.rKey);
+              }
+            };
+            rHeader.appendChild(delReplyBtn);
+          }
 
           const rTime = document.createElement('div');
           rTime.className = 'bulletin-reply-time';
@@ -6815,7 +7073,7 @@
           rMsg.className = 'bulletin-reply-msg';
           rMsg.textContent = r.msg || '';
 
-          item.appendChild(rName);
+          item.appendChild(rHeader);
           item.appendChild(rTime);
           item.appendChild(rMsg);
           list.appendChild(item);
@@ -6859,8 +7117,11 @@
       const replyBtn = document.getElementById('bm-reply-btn');
       if (replyBtn) replyBtn.disabled = true;
 
-      bulletinDb.ref(`bulletin/messages/${bulletinModalKey}/replies`).push({ name, msg, ts: now })
+      const newReplyRef = bulletinDb.ref(`bulletin/messages/${bulletinModalKey}/replies`).push();
+      const newReplyKey = newReplyRef.key;
+      newReplyRef.set({ name, msg, ts: now })
         .then(() => {
+          saveMyBulletinReply(newReplyKey);
           if (replyInput) {
             replyInput.value = '';
             const rc = document.getElementById('bm-reply-count');
