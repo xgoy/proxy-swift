@@ -4748,54 +4748,129 @@
     window.addEventListener('focus', resumeAudioCtxIfNeeded);
 
 
-    function playTone(freq, duration, type, gainNode, vol) {
+    /* ── Core Tone Generator with Frequency Slide & Waveform Control ── */
+    function playTone(freq, duration, type, gainNode, vol, slideFreq) {
       if (!audioCtx || isMuted) return;
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = type || 'square';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      g.gain.setValueAtTime(vol || 0.15, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-      osc.connect(g);
-      g.connect(gainNode || sfxGain);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
+      try {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.setValueAtTime(Math.max(20, freq), audioCtx.currentTime);
+        if (slideFreq) {
+          osc.frequency.exponentialRampToValueAtTime(Math.max(20, slideFreq), audioCtx.currentTime + duration);
+        }
+        g.gain.setValueAtTime(Math.max(0.0001, vol || 0.1), audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(g);
+        g.connect(gainNode || sfxGain);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
     }
 
-    function sfxHover() {
-      playTone(660, 0.06, 'square', sfxGain, 0.1);
+    /* ── Distinct, Satisfying Sound Effects ── */
+
+    /* 1. Member Card Hover: Soft crystal bubble tap (comfortable & subtle) */
+    function sfxMemberHover() {
+      if (!audioCtx || isMuted) return;
+      playTone(784, 0.045, 'sine', sfxGain, 0.07, 660);
+    }
+    const sfxHover = sfxMemberHover; // backward compatibility
+
+    /* 2. CV Scroll Hover: Mystical inventory parchment tick (2-note chime) */
+    function sfxCvHover() {
+      if (!audioCtx || isMuted) return;
+      playTone(587.33, 0.04, 'triangle', sfxGain, 0.07);
+      setTimeout(() => playTone(880, 0.045, 'triangle', sfxGain, 0.07), 35);
     }
 
-    function sfxClick() {
+    /* 3. Bulletin Note Hover: Cute paper note snap / pop */
+    function sfxBulletinHover() {
       if (!audioCtx || isMuted) return;
-      playTone(523, 0.08, 'square', sfxGain, 0.12);
-      setTimeout(() => playTone(784, 0.08, 'square', sfxGain, 0.12), 60);
+      playTone(480, 0.045, 'triangle', sfxGain, 0.06, 920);
     }
 
-    function sfxEasterEgg() {
+    /* 4. Member Modal Open: Ascending character profile fanfare (C5 -> E5 -> G5) */
+    function sfxMemberModalOpen() {
       if (!audioCtx || isMuted) return;
-      const notes = [523, 659, 784, 1047];
-      notes.forEach((n, i) => {
-        setTimeout(() => playTone(n, 0.15, 'square', sfxGain, 0.15), i * 100);
+      playTone(523.25, 0.05, 'triangle', sfxGain, 0.09);
+      setTimeout(() => playTone(659.25, 0.05, 'triangle', sfxGain, 0.10), 45);
+      setTimeout(() => playTone(783.99, 0.12, 'sine', sfxGain, 0.12), 90);
+    }
+    const sfxModalOpen = sfxMemberModalOpen; // default modal open
+
+    /* 5. CV Scroll Modal Open: Ancient parchment unroll & mystical sparkle (A4 -> E5 -> D6) */
+    function sfxCvModalOpen() {
+      if (!audioCtx || isMuted) return;
+      playTone(440, 0.06, 'sine', sfxGain, 0.08);
+      setTimeout(() => playTone(659.25, 0.06, 'triangle', sfxGain, 0.09), 55);
+      setTimeout(() => playTone(1174.66, 0.15, 'sine', sfxGain, 0.11), 110);
+    }
+
+    /* 6. Bulletin Modal Open: Soft envelope opening pop */
+    function sfxBulletinModalOpen() {
+      if (!audioCtx || isMuted) return;
+      playTone(587.33, 0.05, 'triangle', sfxGain, 0.08);
+      setTimeout(() => playTone(880, 0.09, 'sine', sfxGain, 0.10), 50);
+    }
+
+    /* 7. Modal Close: Smooth descending soft pop (G5 -> C5) */
+    function sfxModalClose() {
+      if (!audioCtx || isMuted) return;
+      playTone(659.25, 0.05, 'sine', sfxGain, 0.07, 440);
+    }
+
+    /* 8. CV Download / Quest Collect: Triumph 4-note victory chime */
+    function sfxCvDownload() {
+      if (!audioCtx || isMuted) return;
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((f, i) => {
+        setTimeout(() => playTone(f, 0.07, i === 3 ? 'sine' : 'triangle', sfxGain, 0.11), i * 55);
       });
     }
 
-    function sfxModalOpen() {
+    /* 9. Gallery Slide Switch: Satisfying physical slide click */
+    function sfxSlide() {
       if (!audioCtx || isMuted) return;
-      playTone(440, 0.06, 'square', sfxGain, 0.1);
-      setTimeout(() => playTone(660, 0.1, 'square', sfxGain, 0.1), 50);
+      playTone(392, 0.04, 'sine', sfxGain, 0.07, 523);
     }
 
-    function sfxModalClose() {
+    /* 10. Message Sent (Bulletin): Upward paper plane launch sparkle */
+    function sfxMessageSent() {
       if (!audioCtx || isMuted) return;
-      playTone(660, 0.06, 'square', sfxGain, 0.1);
-      setTimeout(() => playTone(440, 0.08, 'square', sfxGain, 0.1), 50);
+      const notes = [659.25, 880, 1318.51];
+      notes.forEach((f, i) => {
+        setTimeout(() => playTone(f, 0.07, 'triangle', sfxGain, 0.10), i * 55);
+      });
+    }
+
+    /* 11. Reply Sent: Snappy chat reply ping */
+    function sfxReplySent() {
+      if (!audioCtx || isMuted) return;
+      playTone(783.99, 0.05, 'triangle', sfxGain, 0.09);
+      setTimeout(() => playTone(1046.50, 0.09, 'sine', sfxGain, 0.11), 45);
+    }
+
+    /* 12. Standard Button Click: Snappy arcade double-click */
+    function sfxClick() {
+      if (!audioCtx || isMuted) return;
+      playTone(523.25, 0.035, 'triangle', sfxGain, 0.08);
+      setTimeout(() => playTone(659.25, 0.045, 'triangle', sfxGain, 0.08), 35);
+    }
+
+    /* 13. Easter Egg Chime */
+    function sfxEasterEgg() {
+      if (!audioCtx || isMuted) return;
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((n, i) => {
+        setTimeout(() => playTone(n, 0.14, 'triangle', sfxGain, 0.13), i * 90);
+      });
     }
 
     /* Loading beep — short blip repeated during loading bar */
     function sfxLoading() {
       if (!audioCtx || isMuted) return;
-      playTone(440, 0.05, 'square', sfxGain, 0.08);
+      playTone(440, 0.04, 'triangle', sfxGain, 0.07);
     }
 
     /* Intro jingle — plays once when home appears after loading */
@@ -5791,7 +5866,7 @@
 
       wrapper.addEventListener('mouseenter', () => {
         initAudio();
-        sfxHover();
+        sfxMemberHover();
       });
 
       wrapper.addEventListener('mousemove', (e) => {
@@ -5840,7 +5915,7 @@
     /* ════════════════════════════════════════════════════ */
     function openMemberModal(m) {
       initAudio();
-      sfxModalOpen();
+      sfxMemberModalOpen();
       const modal = document.getElementById('member-modal');
       const modalAvatar = document.getElementById('modal-avatar');
       if (m.photo) {
@@ -5914,14 +5989,14 @@
         </div>
       </div>
     `;
-        slot.addEventListener('mouseenter', () => { initAudio(); sfxHover(); });
+        slot.addEventListener('mouseenter', () => { initAudio(); sfxCvHover(); });
         slot.addEventListener('click', () => openCVModal(m));
         grid.appendChild(slot);
       });
     }
 
     function openCVModal(m) {
-      initAudio(); sfxModalOpen();
+      initAudio(); sfxCvModalOpen();
       document.getElementById('cv-modal-header').textContent = `CV SCROLL — ${m.name}`;
       const downloadBtn = document.getElementById('cv-download-btn');
       const statusEl = document.getElementById('cv-modal-status');
@@ -5943,7 +6018,7 @@
     if (cvDlBtn) {
       cvDlBtn.addEventListener('click', (e) => {
         initAudio();
-        sfxClick();
+        sfxCvDownload();
         const href = cvDlBtn.getAttribute('href');
         if (!href || href === '#') {
           e.preventDefault();
@@ -5999,7 +6074,7 @@
 
     function moveGallery(dir, isAuto = false) {
       if (!isAuto) {
-        initAudio(); sfxClick();
+        initAudio(); sfxSlide();
         resetGalleryAutoScroll();
       }
 
@@ -6320,11 +6395,11 @@
       /* Hover & click audio + modal open */
       note.addEventListener('mouseenter', () => {
         if (typeof initAudio !== 'undefined') initAudio();
-        if (typeof sfxHover !== 'undefined') sfxHover();
+        if (typeof sfxBulletinHover !== 'undefined') sfxBulletinHover();
       });
       note.addEventListener('click', () => {
         if (typeof initAudio !== 'undefined') initAudio();
-        if (typeof sfxModalOpen !== 'undefined') sfxModalOpen();
+        if (typeof sfxBulletinModalOpen !== 'undefined') sfxBulletinModalOpen();
         openBulletinModal(data, msgKey);
       });
 
@@ -6464,7 +6539,7 @@
           bulletinLastSent = now;
           setBulletinStatus('[OK] Message posted!', 'ok');
           startCooldownBar();
-          if (typeof sfxClick !== 'undefined') sfxClick();
+          if (typeof sfxMessageSent !== 'undefined') sfxMessageSent();
           setTimeout(() => setBulletinStatus(''), 3000);
         })
         .catch(err => {
@@ -6575,6 +6650,7 @@
 
     /* ── Close modal ── */
     function closeBulletinModal() {
+      if (typeof sfxModalClose !== 'undefined') sfxModalClose();
       document.getElementById('bulletin-modal').classList.remove('show');
       /* Restore scroll — remove scrollbar compensation */
       document.body.style.overflow = '';
@@ -6668,6 +6744,7 @@
           }
           bulletinReplyLastSent = now;
           setStatus('[OK] Reply posted!', 'ok');
+          if (typeof sfxReplySent !== 'undefined') sfxReplySent();
           setTimeout(() => {
             setStatus('');
             if (replyBtn) replyBtn.disabled = false;
