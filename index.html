@@ -4703,6 +4703,8 @@
     let isMuted = false;
     let audioUnlocked = false;
 
+    let sfxFilter = null;
+
     function initAudio() {
       if (audioCtx) {
         /* iOS Safari: context gets suspended on tab/PDF switch — resume it */
@@ -4717,8 +4719,14 @@
       masterGain.connect(audioCtx.destination);
 
       sfxGain = audioCtx.createGain();
-      sfxGain.gain.value = 0.8;
-      sfxGain.connect(masterGain);
+      sfxGain.gain.value = 0.75;
+
+      /* Warm 8-bit Hardware Speaker Filter (emulates GameBoy DMG-01 / NES DAC roll-off) */
+      sfxFilter = audioCtx.createBiquadFilter();
+      sfxFilter.type = 'lowpass';
+      sfxFilter.frequency.value = 3600; // eliminates piercing digital highs, keeps punchy 8-bit bite
+      sfxGain.connect(sfxFilter);
+      sfxFilter.connect(masterGain);
 
       initBGMGain(); /* Connect BGM into Web Audio graph for iOS volume support */
     }
@@ -4748,114 +4756,140 @@
     window.addEventListener('focus', resumeAudioCtxIfNeeded);
 
 
-    /* ── Core Tone Generator with Frequency Slide & Waveform Control ── */
+    /* ── Authentic 8-bit Chiptune Pulse Generator ── */
+    function playPulse(freq, duration, vol, endFreq) {
+      if (!audioCtx || isMuted) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = 'square'; /* Pure 8-bit chiptune pulse wave */
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(Math.max(20, freq), now);
+        if (endFreq) {
+          osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFreq), now + duration);
+        }
+        g.gain.setValueAtTime(vol || 0.1, now);
+        g.gain.setValueAtTime(vol || 0.1, now + duration * 0.65);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        osc.connect(g);
+        g.connect(sfxGain);
+        osc.start(now);
+        osc.stop(now + duration);
+      } catch (e) {}
+    }
+
+    /* Standard tone helper with waveform choice (backward compatibility) */
     function playTone(freq, duration, type, gainNode, vol, slideFreq) {
       if (!audioCtx || isMuted) return;
       try {
         const osc = audioCtx.createOscillator();
         const g = audioCtx.createGain();
-        osc.type = type || 'sine';
-        osc.frequency.setValueAtTime(Math.max(20, freq), audioCtx.currentTime);
+        osc.type = type || 'square';
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(Math.max(20, freq), now);
         if (slideFreq) {
-          osc.frequency.exponentialRampToValueAtTime(Math.max(20, slideFreq), audioCtx.currentTime + duration);
+          osc.frequency.exponentialRampToValueAtTime(Math.max(20, slideFreq), now + duration);
         }
-        g.gain.setValueAtTime(Math.max(0.0001, vol || 0.1), audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        g.gain.setValueAtTime(vol || 0.1, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
         osc.connect(g);
         g.connect(gainNode || sfxGain);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        osc.start(now);
+        osc.stop(now + duration);
       } catch (e) {}
     }
 
-    /* ── Distinct, Satisfying Sound Effects ── */
+    /* ════════════════════════════════════════════════════ */
+    /* ███ 8-BIT RETRO PIXEL SFX PALETTE (AUTHENTIC)    ███ */
+    /* ════════════════════════════════════════════════════ */
 
-    /* 1. Member Card Hover: Soft crystal bubble tap (comfortable & subtle) */
+    /* 1. Member Card Hover: Iconic GameBoy D-Pad cursor blip (B5 -> E6 fast chirp) */
     function sfxMemberHover() {
       if (!audioCtx || isMuted) return;
-      playTone(784, 0.045, 'sine', sfxGain, 0.07, 660);
+      playPulse(987.77, 0.022, 0.08);
+      setTimeout(() => playPulse(1318.51, 0.025, 0.09), 20);
     }
     const sfxHover = sfxMemberHover; // backward compatibility
 
-    /* 2. CV Scroll Hover: Mystical inventory parchment tick (2-note chime) */
+    /* 2. CV Scroll Hover: RPG Bag item inspect tick (staccato D5 -> D6) */
     function sfxCvHover() {
       if (!audioCtx || isMuted) return;
-      playTone(587.33, 0.04, 'triangle', sfxGain, 0.07);
-      setTimeout(() => playTone(880, 0.045, 'triangle', sfxGain, 0.07), 35);
+      playPulse(587.33, 0.022, 0.08);
+      setTimeout(() => playPulse(1174.66, 0.035, 0.09), 25);
     }
 
-    /* 3. Bulletin Note Hover: Cute paper note snap / pop */
+    /* 3. Bulletin Note Hover: Retro arcade bounce/spring blip (pitch sweep 440Hz -> 880Hz) */
     function sfxBulletinHover() {
       if (!audioCtx || isMuted) return;
-      playTone(480, 0.045, 'triangle', sfxGain, 0.06, 920);
+      playPulse(440, 0.045, 0.07, 880);
     }
 
-    /* 4. Member Modal Open: Ascending character profile fanfare (C5 -> E5 -> G5) */
+    /* 4. Member Modal Open: 8-bit Pokedex / Character Sheet inspect fanfare (E5 -> G5 -> C6) */
     function sfxMemberModalOpen() {
       if (!audioCtx || isMuted) return;
-      playTone(523.25, 0.05, 'triangle', sfxGain, 0.09);
-      setTimeout(() => playTone(659.25, 0.05, 'triangle', sfxGain, 0.10), 45);
-      setTimeout(() => playTone(783.99, 0.12, 'sine', sfxGain, 0.12), 90);
+      playPulse(659.25, 0.035, 0.09);
+      setTimeout(() => playPulse(783.99, 0.035, 0.10), 38);
+      setTimeout(() => playPulse(1046.50, 0.09, 0.11), 76);
     }
     const sfxModalOpen = sfxMemberModalOpen; // default modal open
 
-    /* 5. CV Scroll Modal Open: Ancient parchment unroll & mystical sparkle (A4 -> E5 -> D6) */
+    /* 5. CV Scroll Modal Open: Zelda-style Treasure Chest / Secret Jingle (C5 -> E5 -> G5 -> E6) */
     function sfxCvModalOpen() {
       if (!audioCtx || isMuted) return;
-      playTone(440, 0.06, 'sine', sfxGain, 0.08);
-      setTimeout(() => playTone(659.25, 0.06, 'triangle', sfxGain, 0.09), 55);
-      setTimeout(() => playTone(1174.66, 0.15, 'sine', sfxGain, 0.11), 110);
+      playPulse(523.25, 0.04, 0.09);
+      setTimeout(() => playPulse(659.25, 0.04, 0.09), 45);
+      setTimeout(() => playPulse(783.99, 0.04, 0.10), 90);
+      setTimeout(() => playPulse(1318.51, 0.16, 0.12), 135);
     }
 
-    /* 6. Bulletin Modal Open: Soft envelope opening pop */
+    /* 6. Bulletin Modal Open: 8-bit dialogue box open chirp (D5 -> A5) */
     function sfxBulletinModalOpen() {
       if (!audioCtx || isMuted) return;
-      playTone(587.33, 0.05, 'triangle', sfxGain, 0.08);
-      setTimeout(() => playTone(880, 0.09, 'sine', sfxGain, 0.10), 50);
+      playPulse(587.33, 0.035, 0.09);
+      setTimeout(() => playPulse(880, 0.07, 0.10), 40);
     }
 
-    /* 7. Modal Close: Smooth descending soft pop (G5 -> C5) */
+    /* 7. Modal Close: GameBoy B-button cancel blip (G5 -> G4 descending) */
     function sfxModalClose() {
       if (!audioCtx || isMuted) return;
-      playTone(659.25, 0.05, 'sine', sfxGain, 0.07, 440);
+      playPulse(783.99, 0.03, 0.08);
+      setTimeout(() => playPulse(392, 0.04, 0.07), 30);
     }
 
-    /* 8. CV Download / Quest Collect: Triumph 4-note victory chime */
+    /* 8. CV Download: Legendary Super Mario Coin Ding (B5 -> E6 sustained) */
     function sfxCvDownload() {
       if (!audioCtx || isMuted) return;
-      const notes = [523.25, 659.25, 783.99, 1046.50];
-      notes.forEach((f, i) => {
-        setTimeout(() => playTone(f, 0.07, i === 3 ? 'sine' : 'triangle', sfxGain, 0.11), i * 55);
-      });
+      playPulse(987.77, 0.038, 0.13);
+      setTimeout(() => playPulse(1318.51, 0.28, 0.14), 38);
     }
 
-    /* 9. Gallery Slide Switch: Satisfying physical slide click */
+    /* 9. Gallery Slide Switch: 8-bit cursor flick (pitch slide 523Hz -> 784Hz) */
     function sfxSlide() {
       if (!audioCtx || isMuted) return;
-      playTone(392, 0.04, 'sine', sfxGain, 0.07, 523);
+      playPulse(523.25, 0.032, 0.07, 783.99);
     }
 
-    /* 10. Message Sent (Bulletin): Upward paper plane launch sparkle */
+    /* 10. Message Sent (Bulletin): 8-bit Level-up / Quest Complete Jingle (C5 -> E5 -> G5 -> C6) */
     function sfxMessageSent() {
       if (!audioCtx || isMuted) return;
-      const notes = [659.25, 880, 1318.51];
-      notes.forEach((f, i) => {
-        setTimeout(() => playTone(f, 0.07, 'triangle', sfxGain, 0.10), i * 55);
-      });
+      playPulse(523.25, 0.04, 0.09);
+      setTimeout(() => playPulse(659.25, 0.04, 0.10), 40);
+      setTimeout(() => playPulse(783.99, 0.04, 0.10), 80);
+      setTimeout(() => playPulse(1046.50, 0.18, 0.12), 120);
     }
 
-    /* 11. Reply Sent: Snappy chat reply ping */
+    /* 11. Reply Sent: 8-bit Double High Ding (A5 -> E6) */
     function sfxReplySent() {
       if (!audioCtx || isMuted) return;
-      playTone(783.99, 0.05, 'triangle', sfxGain, 0.09);
-      setTimeout(() => playTone(1046.50, 0.09, 'sine', sfxGain, 0.11), 45);
+      playPulse(880, 0.035, 0.09);
+      setTimeout(() => playPulse(1318.51, 0.12, 0.11), 35);
     }
 
-    /* 12. Standard Button Click: Snappy arcade double-click */
+    /* 12. Standard Button Click: GameBoy A-button tactile pulse (E5 -> A5) */
     function sfxClick() {
       if (!audioCtx || isMuted) return;
-      playTone(523.25, 0.035, 'triangle', sfxGain, 0.08);
-      setTimeout(() => playTone(659.25, 0.045, 'triangle', sfxGain, 0.08), 35);
+      playPulse(659.25, 0.03, 0.09);
+      setTimeout(() => playPulse(880, 0.035, 0.09), 25);
     }
 
     /* 13. Easter Egg Chime */
