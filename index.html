@@ -2533,6 +2533,56 @@
       max-height: 90vh;
       overflow-y: auto;
       text-align: center;
+      transition: max-width 0.2s ease;
+    }
+
+    .cv-modal-content.has-preview {
+      max-width: 880px;
+      width: 95%;
+      padding: 24px 26px 20px;
+    }
+
+    .cv-preview-container {
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .cv-iframe-wrapper {
+      width: 100%;
+      height: 60vh;
+      min-height: 440px;
+      max-height: 660px;
+      border: 2.5px solid #E04B84;
+      border-radius: 6px;
+      background: #281B22;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(224, 75, 132, 0.15);
+      position: relative;
+    }
+
+    .cv-pdf-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #FFFFFF;
+    }
+
+    .cv-modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .cv-modal-content.has-preview {
+        padding: 20px 14px 16px;
+      }
+      .cv-iframe-wrapper {
+        height: 50vh;
+        min-height: 320px;
+      }
     }
 
     .cv-placeholder {
@@ -4509,15 +4559,28 @@
 
   <!-- ═══════════ CV MODAL ═══════════ -->
   <div id="cv-modal">
-    <div class="cv-modal-content">
+    <div class="cv-modal-content" id="cv-modal-content">
       <button class="modal-close" id="cv-modal-close">✕</button>
       <div class="modal-header" id="cv-modal-header">CV SCROLL</div>
-      <div class="cv-placeholder">
+
+      <!-- 1. Inline PDF Preview Container (active when CV exists) -->
+      <div id="cv-preview-container" class="cv-preview-container" style="display:none;">
+        <div class="cv-iframe-wrapper">
+          <iframe id="cv-modal-iframe" class="cv-pdf-frame" src="" title="CV PDF Preview"></iframe>
+        </div>
+      </div>
+
+      <!-- 2. Placeholder Container (active when CV is not yet uploaded) -->
+      <div id="cv-placeholder-container" class="cv-placeholder">
         <div class="cv-placeholder-icon">
           <img src="photos/cv.png" alt="CV Scroll">
         </div>
-        <div id="cv-modal-status" style="font-family:'DotGothic16',sans-serif;font-size:18px;margin-bottom:8px;">Dokumen
-          CV siap untuk diunduh.</div>
+        <div id="cv-modal-status" style="font-family:'DotGothic16',sans-serif;font-size:18px;margin-bottom:8px;">
+          Dokumen CV siap untuk diunduh.
+        </div>
+      </div>
+
+      <div class="cv-modal-actions">
         <a id="cv-download-btn" class="cv-download-btn" href="#" download target="_blank">
           <span class="cv-btn-icon">💾</span> DOWNLOAD CV (PDF)
         </a>
@@ -6032,46 +6095,72 @@
     function openCVModal(m) {
       initAudio(); sfxCvModalOpen();
       document.getElementById('cv-modal-header').textContent = `CV SCROLL — ${m.name}`;
+      const modalContent = document.getElementById('cv-modal-content');
+      const previewContainer = document.getElementById('cv-preview-container');
+      const placeholderContainer = document.getElementById('cv-placeholder-container');
+      const iframe = document.getElementById('cv-modal-iframe');
       const downloadBtn = document.getElementById('cv-download-btn');
       const statusEl = document.getElementById('cv-modal-status');
-      if (downloadBtn) {
-        const cvHref = m.cv || '#';
-        downloadBtn.href = cvHref;
-        downloadBtn.setAttribute('download', `${m.name.replace(/\s+/g, '_')}_CV.pdf`);
+
+      if (m.cv) {
+        if (modalContent) modalContent.classList.add('has-preview');
+        if (previewContainer) previewContainer.style.display = 'block';
+        if (placeholderContainer) placeholderContainer.style.display = 'none';
+        if (iframe) iframe.src = m.cv;
+        if (downloadBtn) {
+          downloadBtn.href = m.cv;
+          downloadBtn.setAttribute('download', `${m.name.replace(/\s+/g, '_')}_CV.pdf`);
+          downloadBtn.innerHTML = '<span class="cv-btn-icon">💾</span> DOWNLOAD CV (PDF)';
+        }
+      } else {
+        if (modalContent) modalContent.classList.remove('has-preview');
+        if (previewContainer) previewContainer.style.display = 'none';
+        if (iframe) iframe.src = '';
+        if (placeholderContainer) placeholderContainer.style.display = 'flex';
         if (statusEl) {
-          statusEl.textContent = m.cv
-            ? `Dokumen CV milik ${m.name} siap untuk diunduh.`
-            : `Klik tombol di bawah untuk mengunduh berkas CV ${m.name}.`;
+          statusEl.textContent = `Dokumen CV milik ${m.name} sedang disiapkan.`;
+        }
+        if (downloadBtn) {
+          downloadBtn.href = '#';
+          downloadBtn.removeAttribute('download');
+          downloadBtn.innerHTML = '<span class="cv-btn-icon">⏳</span> CV SEDANG DISIAPKAN';
         }
       }
-      document.getElementById('cv-modal').classList.add('show');
+
+      /* Lock scroll without layout shift */
+      const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = scrollbarW + 'px';
       document.body.style.overflow = 'hidden';
+
+      document.getElementById('cv-modal').classList.add('show');
+    }
+
+    function closeCVModal() {
+      sfxModalClose();
+      document.getElementById('cv-modal').classList.remove('show');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      const iframe = document.getElementById('cv-modal-iframe');
+      if (iframe) iframe.src = '';
     }
 
     const cvDlBtn = document.getElementById('cv-download-btn');
     if (cvDlBtn) {
       cvDlBtn.addEventListener('click', (e) => {
         initAudio();
-        sfxCvDownload();
         const href = cvDlBtn.getAttribute('href');
         if (!href || href === '#') {
           e.preventDefault();
           alert('Dokumen CV sedang disiapkan!');
+          return;
         }
+        sfxCvDownload();
       });
     }
 
-    document.getElementById('cv-modal-close').addEventListener('click', () => {
-      sfxModalClose();
-      document.getElementById('cv-modal').classList.remove('show');
-      document.body.style.overflow = '';
-    });
+    document.getElementById('cv-modal-close').addEventListener('click', closeCVModal);
     document.getElementById('cv-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'cv-modal') {
-        sfxModalClose();
-        e.target.classList.remove('show');
-        document.body.style.overflow = '';
-      }
+      if (e.target.id === 'cv-modal') closeCVModal();
     });
 
     /* ════════════════════════════════════════════════════ */
@@ -6288,9 +6377,10 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         document.getElementById('member-modal').classList.remove('show');
-        document.getElementById('cv-modal').classList.remove('show');
+        closeCVModal();
         document.getElementById('lightbox').classList.remove('show');
-        document.getElementById('bulletin-modal').classList.remove('show');
+        if (typeof closeBulletinModal === 'function') closeBulletinModal();
+        else document.getElementById('bulletin-modal').classList.remove('show');
         document.body.style.overflow = '';
       }
       if (e.key === 'ArrowLeft') moveGallery(-1);
