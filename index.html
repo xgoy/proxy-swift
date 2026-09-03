@@ -3282,49 +3282,54 @@
 
     .bulletin-delete-btn {
       font-family: 'Press Start 2P', monospace;
-      font-size: 7.5px;
+      font-size: 8px;
       color: #FFFFFF;
-      background: #D32F2F;
-      border: 1.5px solid #281B22;
-      box-shadow: 0 2px 0 #281B22;
+      background: #E04B84;
+      border: 2px solid #281B22;
+      box-shadow: 0 3px 0 #281B22;
       border-radius: 4px;
-      padding: 5px 9px;
+      padding: 6px 11px;
       cursor: pointer;
       letter-spacing: 0.5px;
-      transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
       user-select: none;
     }
 
     .bulletin-delete-btn:hover {
-      background: #B71C1C;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 0 #281B22;
+      background: #D32F2F;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #281B22;
     }
 
     .bulletin-delete-btn:active {
-      transform: translateY(1px);
+      transform: translateY(2px);
       box-shadow: 0 1px 0 #281B22;
     }
 
     .bulletin-delete-confirm {
-      background: #FFEBEE;
-      border: 2px dashed #D32F2F;
-      border-radius: 5px;
-      padding: 8px 12px;
-      margin-bottom: 12px;
+      background: #FFF0F5;
+      border: 2px solid #281B22;
+      box-shadow: 0 3px 0 #281B22;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-family: 'DotGothic16', sans-serif;
-      font-size: 15px;
-      color: #B71C1C;
+      font-size: 16px;
+      color: #281B22;
       animation: noteSlideIn 0.15s ease;
     }
 
     .bulletin-confirm-btns {
       display: flex;
-      gap: 6px;
+      gap: 8px;
     }
 
     .bulletin-confirm-yes {
@@ -3332,14 +3337,17 @@
       font-size: 7px;
       color: #FFFFFF;
       background: #D32F2F;
-      border: 1px solid #281B22;
+      border: 1.5px solid #281B22;
+      box-shadow: 0 2px 0 #281B22;
       border-radius: 3px;
-      padding: 4px 8px;
+      padding: 5px 10px;
       cursor: pointer;
+      transition: transform 0.1s, background 0.1s;
     }
 
     .bulletin-confirm-yes:hover {
       background: #B71C1C;
+      transform: translateY(-1px);
     }
 
     .bulletin-confirm-no {
@@ -3347,10 +3355,17 @@
       font-size: 7px;
       color: #281B22;
       background: #FFFFFF;
-      border: 1px solid #281B22;
+      border: 1.5px solid #281B22;
+      box-shadow: 0 2px 0 #281B22;
       border-radius: 3px;
-      padding: 4px 8px;
+      padding: 5px 10px;
       cursor: pointer;
+      transition: transform 0.1s, background 0.1s;
+    }
+
+    .bulletin-confirm-no:hover {
+      background: #F0E6EA;
+      transform: translateY(-1px);
     }
 
     .bulletin-note-you {
@@ -3358,6 +3373,7 @@
       font-size: 6px;
       color: #FFFFFF;
       background: #E04B84;
+      border: 1px solid #281B22;
       padding: 2px 4px;
       border-radius: 3px;
       letter-spacing: 0.5px;
@@ -3369,25 +3385,29 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .bulletin-reply-delete-btn {
       font-family: 'Press Start 2P', monospace;
       font-size: 6.5px;
-      color: #D32F2F;
-      background: none;
-      border: 1px solid #FFCDD2;
+      color: #FFFFFF;
+      background: #E04B84;
+      border: 1.5px solid #281B22;
+      box-shadow: 0 2px 0 #281B22;
       border-radius: 3px;
-      padding: 2px 5px;
+      padding: 3px 6px;
       cursor: pointer;
-      transition: all 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
     }
 
     .bulletin-reply-delete-btn:hover {
       background: #D32F2F;
-      color: #FFFFFF;
-      border-color: #B71C1C;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 #281B22;
     }
 
     .bulletin-modal-time {
@@ -4798,7 +4818,15 @@
       <div class="bulletin-modal-top">
         <div class="bulletin-modal-name" id="bm-name"></div>
         <button class="bulletin-delete-btn" id="bm-delete-btn" style="display:none;" title="Delete this post">
-          🗑️ DELETE POST
+          <svg class="pixel-trash-icon" viewBox="0 0 10 11" width="10" height="11" aria-hidden="true" style="image-rendering:pixelated;display:inline-block;vertical-align:-1px;">
+            <rect x="3" y="0" width="4" height="1" fill="currentColor"/>
+            <rect x="1" y="1" width="8" height="2" fill="currentColor"/>
+            <rect x="2" y="3" width="6" height="7" fill="currentColor"/>
+            <rect x="3" y="10" width="4" height="1" fill="currentColor"/>
+            <rect x="3" y="4" width="1" height="5" fill="#281B22"/>
+            <rect x="6" y="4" width="1" height="5" fill="#281B22"/>
+          </svg>
+          DELETE
         </button>
       </div>
       <div id="bm-delete-confirm" class="bulletin-delete-confirm" style="display:none;">
@@ -7055,7 +7083,17 @@
           if (isMyBulletinReply(r.rKey)) {
             const delReplyBtn = document.createElement('button');
             delReplyBtn.className = 'bulletin-reply-delete-btn';
-            delReplyBtn.textContent = '✕ DELETE';
+            delReplyBtn.innerHTML = `
+              <svg viewBox="0 0 10 11" width="8" height="9" aria-hidden="true" style="image-rendering:pixelated;vertical-align:-1px;">
+                <rect x="3" y="0" width="4" height="1" fill="currentColor"/>
+                <rect x="1" y="1" width="8" height="2" fill="currentColor"/>
+                <rect x="2" y="3" width="6" height="7" fill="currentColor"/>
+                <rect x="3" y="10" width="4" height="1" fill="currentColor"/>
+                <rect x="3" y="4" width="1" height="5" fill="#281B22"/>
+                <rect x="6" y="4" width="1" height="5" fill="#281B22"/>
+              </svg>
+              <span>DEL</span>
+            `;
             delReplyBtn.title = 'Delete this reply';
             delReplyBtn.onclick = () => {
               if (confirm('Delete your reply?')) {
