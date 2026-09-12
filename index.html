@@ -6053,38 +6053,59 @@
     /* ════════════════════════════════════════════════════ */
     /* ███ SNAPPY SCROLL                               ███ */
     /* ════════════════════════════════════════════════════ */
+    let isProgrammaticScroll = false;
+    let programmaticScrollTimer = null;
+
     function scrollToSection(id) {
       sfxClick();
       const el = document.getElementById(id);
       if (!el) return;
-      const targetY = el.offsetTop - 52;
+      const targetY = Math.max(0, el.offsetTop - 56);
       const startY = window.pageYOffset;
       const dist = targetY - startY;
       const steps = 24;
       let step = 0;
+
+      isProgrammaticScroll = true;
+      clearTimeout(programmaticScrollTimer);
+
+      const sections = ['hero', 'about', 'members', 'inventory', 'gallery', 'bulletin'];
+      document.querySelectorAll('.nav-link').forEach((l, i) => {
+        l.classList.toggle('active', sections[i] === id);
+      });
 
       function tick() {
         step++;
         const p = step / steps;
         const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
         window.scrollTo(0, startY + dist * ease);
-        if (step < steps) setTimeout(tick, 14);
+        if (step < steps) {
+          setTimeout(tick, 14);
+        } else {
+          programmaticScrollTimer = setTimeout(() => {
+            isProgrammaticScroll = false;
+          }, 100);
+        }
       }
       tick();
-
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      event && event.target && event.target.classList.add('active');
     }
 
     /* Active section highlight on scroll */
     window.addEventListener('scroll', () => {
-      const sections = ['hero', 'about', 'members', 'inventory', 'gallery'];
+      if (isProgrammaticScroll) return;
+      const sections = ['hero', 'about', 'members', 'inventory', 'gallery', 'bulletin'];
       const scrollY = window.pageYOffset + 200;
       let current = 'hero';
-      sections.forEach(s => {
-        const el = document.getElementById(s);
-        if (el && el.offsetTop <= scrollY) current = s;
-      });
+
+      if (window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight - 60) {
+        current = 'bulletin';
+      } else {
+        sections.forEach(s => {
+          const el = document.getElementById(s);
+          if (el && el.offsetTop <= scrollY) current = s;
+        });
+      }
+
       document.querySelectorAll('.nav-link').forEach((l, i) => {
         l.classList.toggle('active', sections[i] === current);
       });
