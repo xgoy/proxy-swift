@@ -2464,6 +2464,16 @@
       font-weight: 500;
     }
 
+    .stat-quote-row .quote-source {
+      display: block;
+      margin-top: 4px;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 11px;
+      color: #E04B84;
+      letter-spacing: 0.5px;
+    }
+
     .modal-socials {
       display: flex;
       justify-content: center;
@@ -4955,7 +4965,7 @@
     const MEMBERS = [
       { id: 1, name: "NAUFAL RIZKI RIYADI", role: "PJK", birthDate: "dd/mm/yyyy", city: "City Alpha", nim: "M0403241069", funFact: "Fun fact loading...", hobbies: "Gaming, Coding", track: "SNBP", ig: "#", li: "#", isPJ: true, favQuote: "Work hard, play hard, code harder! 🎮🚀" },
       { id: 2, name: "DANDHY SURYA KUSUMA ATMAJA", role: "Member", birthDate: "dd/mm/yyyy", city: "City Beta", nim: "M0403251143", funFact: "Fun fact loading...", hobbies: "Reading, Music", track: "SNBT", ig: "#", li: "#", isPJ: false, favQuote: "Belajar terus sampai kuis ga berasa susah! 📚✨" },
-      { id: 3, name: "NINA SALAMAH", role: "Member", birthDate: "14/04/2007", city: "Kalimantan Selatan", nim: "M0403251146", funFact: "Fun fact loading...", hobbies: "Art, Photography, Sports", track: "SNBP", ig: "https://www.instagram.com/ninaslmhhh14", li: "https://www.linkedin.com/in/nina-salamah-a34248382", photo: "photos/nina.jpeg", cv: "cv/CV NINA SALAMAH (Sep 2026).pdf", isPJ: false, favQuote: "Life goes on" },
+      { id: 3, name: "NINA SALAMAH", role: "Member", birthDate: "14/04/2007", city: "Kalimantan Selatan", nim: "M0403251146", funFact: "Fun fact loading...", hobbies: "Art, Photography, Sports", track: "SNBP", ig: "https://www.instagram.com/ninaslmhhh14", li: "https://www.linkedin.com/in/nina-salamah-a34248382", photo: "photos/nina.jpeg", cv: "cv/CV NINA SALAMAH (Sep 2026).pdf", isPJ: false, favQuote: "Life goes on<br>-BTS" },
       { id: 4, name: "MUHAMMAD DARAZI", role: "Member", birthDate: "dd/mm/yyyy", city: "City Delta", nim: "M0403251147", funFact: "Fun fact loading...", hobbies: "Sports, Cooking", track: "SNBT", ig: "#", li: "#", isPJ: false, favQuote: "Tetap tenang dan kuasai keadaan. ⚽🔥" },
       { id: 5, name: "CICI AMALIA DIN", role: "Member", birthDate: "30/06/2007", city: "Kalimantan Selatan", nim: "M0403251148", funFact: "Fun fact loading...", hobbies: "Sleep, tidur, bobo, memejamkan mata", track: "Mandiri", ig: "https://www.instagram.com/ciophile_", li: "https://www.linkedin.com/in/cici-amalia-din", photo: "photos/cici2.png", cv: "cv/cici.pdf", isPJ: false, favQuote: "Just do it" },
       { id: 6, name: "TIMOTHY JECONIA ARYA PUTRA SITORUS", role: "Member", birthDate: "dd/mm/yyyy", city: "City Zeta", nim: "M0403251151", funFact: "Fun fact loading...", hobbies: "Writing, Gaming", track: "SNBP", ig: "#", li: "#", isPJ: false, favQuote: "Setiap baris kode adalah cerita baru. ✍️💻" },
@@ -4963,7 +4973,7 @@
       { id: 8, name: "JIHAN SAVIRA ADITYA LUBIS", role: "Member", birthDate: "dd/mm/yyyy", city: "City Theta", nim: "M0403251155", funFact: "Fun fact loading...", hobbies: "Hiking, Movies", track: "SNBP", ig: "#", li: "#", isPJ: false, favQuote: "Puncak tertinggi selalu memberikan pemandangan terbaik. ⛰️🎬" },
       { id: 9, name: "MUHAMMAD DZAKIY NURRUS AKBAR", role: "Member", birthDate: "17/02/2007", city: "Bekasi", nim: "M0403251158", funFact: "jatuh cinta dengan happydent no sugar", hobbies: "Mengeksplorasi dunia", track: "SM-IPB Eligible SNBP", ig: "https://www.instagram.com/mjqhibiniu?igsi=MWJyZHJnd2p5Z2VtcQ%3D%3D", li: "https://www.linkedin.com/in/muhammad-dzakiy-nurrus-akbar-033534375/", photo: "photos/dzakiy.jpg", cv: "cv/Muhammad Dzakiy Nurrus Akbar_cv.pdf", isPJ: false, favQuote: "Kalo lu pukulin orang setiap hari trs tiba2 lu berenti, orang itu bakal terima kasih ke lu. Kalo lu kasih makan orang setiap hari trs tiba2 lu berenti, orang itu bakal benci banget sama lu. Perhatiin perbedaannya, orang kalo dibaikin tiap hari bakal ngerasa itu tanggung jawab lu ngebaikin mereka padahal mah kaga. Pilihlah temen yg bisa ngehargain lu." },
       { id: 10, name: "AYESHA SAHLA FAZILA", role: "Member", birthDate: "dd/mm/yyyy", city: "City Kappa", nim: "M0403251160", funFact: "Fun fact loading...", hobbies: "Drawing, Singing", track: "SNBT", ig: "#", li: "#", isPJ: false, favQuote: "Melukis mimpi dengan warna keberanian. 🎨🎤" },
-      { id: 11, name: "TAUFIK KURNIAWAN", role: "Member", birthDate: "01/11/2006", city: "Depok", nim: "M0403251161", funFact: "Fun fact loading...", hobbies: "Nonton, dengerin lagu, main game, gambar", track: "SNBP", ig: "https://www.instagram.com/taufik.k5", li: "https://www.linkedin.com/in/taufik-kurniawan-29940041a?utm_source=share_via&utm_content=profile&utm_medium=member_android", photo: "photos/topik.jpeg", cv: "cv/CV_Taufik Kurniawan.pdf", isPJ: false, favQuote: "We can’t change what’s done. We can only move on. -Arthur Morgan" },
+      { id: 11, name: "TAUFIK KURNIAWAN", role: "Member", birthDate: "01/11/2006", city: "Depok", nim: "M0403251161", funFact: "Fun fact loading...", hobbies: "Nonton, dengerin lagu, main game, gambar", track: "SNBP", ig: "https://www.instagram.com/taufik.k5", li: "https://www.linkedin.com/in/taufik-kurniawan-29940041a?utm_source=share_via&utm_content=profile&utm_medium=member_android", photo: "photos/topik.jpeg", cv: "cv/CV_Taufik Kurniawan.pdf", isPJ: false, favQuote: "We can’t change what’s done. We can only move on.<br>-Arthur Morgan" },
       { id: 12, name: "ANANDA CHINDI DWI PUTRI", role: "Member", birthDate: "dd/mm/yyyy", city: "City Mu", nim: "M0403251164", funFact: "Fun fact loading...", hobbies: "Coding, Music", track: "SNBT", ig: "#", li: "#", isPJ: false, favQuote: "Code with passion, live with purpose! 💻🎧" },
     ];
 
@@ -6250,6 +6260,16 @@
       }
       document.getElementById('modal-name').textContent = m.name;
 
+      let quoteHtml = '“Quote loading...”';
+      if (m.favQuote) {
+        const parts = m.favQuote.split(/<br\s*\/?>/i);
+        if (parts.length > 1) {
+          quoteHtml = `“${parts[0].trim()}”<span class="quote-source">${parts.slice(1).join('<br>').trim()}</span>`;
+        } else {
+          quoteHtml = `“${m.favQuote}”`;
+        }
+      }
+
       const stats = document.getElementById('modal-stats');
       stats.innerHTML = `
     <div class="stat-row"><span class="stat-label">NIM</span><span class="stat-value">${m.nim}</span></div>
@@ -6258,7 +6278,7 @@
     <div class="stat-row"><span class="stat-label">HOBBIES</span><span class="stat-value">${m.hobbies}</span></div>
     <div class="stat-row stat-quote-row">
       <span class="stat-label"><span class="pixel-quote-icon">“</span> FAV QUOTE</span>
-      <span class="stat-value quote-value">“${m.favQuote || 'Quote loading...'}”</span>
+      <span class="stat-value quote-value">${quoteHtml}</span>
     </div>
   `;
 
