@@ -7,6 +7,13 @@
   <title>Proxy Swift Ilkomerz 62</title>
   <meta name="description"
     content="Official website of Proxy Swift — Pekan Ilkomerz, Angkatan 62. A pixel art retro game experience.">
+  <script>
+    try {
+      if (sessionStorage.getItem('swift_game_started') === 'true') {
+        document.documentElement.classList.add('game-already-started');
+      }
+    } catch (e) {}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -172,6 +179,15 @@
     #gameboy-intro.fade-out {
       opacity: 0;
       pointer-events: none;
+    }
+
+    html.game-already-started #gameboy-intro,
+    html.game-already-started #loading-screen,
+    html.game-already-started #welcome-overlay {
+      display: none !important;
+    }
+    html.game-already-started body.loading {
+      overflow: auto !important;
     }
 
     /* Starry Night Sky Background Layer (Pixel Grid + Stars) */
@@ -5582,6 +5598,62 @@
       let playerName = 'PLAYER';
       let started = false;
 
+      /* ── Session restoration (skip intro if already entered in this browser session) ── */
+      let savedStarted = false;
+      try {
+        savedStarted = sessionStorage.getItem('swift_game_started') === 'true';
+        if (savedStarted) {
+          const savedName = sessionStorage.getItem('swift_player_name');
+          if (savedName) {
+            playerName = savedName;
+            currentPlayerName = savedName;
+          }
+        }
+      } catch (e) {}
+
+      if (savedStarted) {
+        started = true;
+        if (gbIntro) gbIntro.style.display = 'none';
+        if (ls) ls.style.display = 'none';
+        if (wOverlay) wOverlay.style.display = 'none';
+        document.body.classList.remove('loading');
+        const greeting = document.getElementById('hero-greeting');
+        if (greeting) greeting.textContent = `WELCOME, ${playerName}!`;
+        if (typeof updateAboutGhost === 'function') updateAboutGhost();
+
+        /* Restore scroll position and opened CV modal if any */
+        setTimeout(() => {
+          try {
+            const savedCvId = sessionStorage.getItem('swift_opened_cv_member');
+            const savedY = sessionStorage.getItem('swift_scroll_y');
+            const savedSection = sessionStorage.getItem('swift_last_section');
+            if (savedY) {
+              window.scrollTo(0, parseInt(savedY, 10));
+            } else if (savedSection) {
+              const sec = document.getElementById(savedSection);
+              if (sec) sec.scrollIntoView();
+            }
+            if (savedCvId && typeof openCVModal === 'function' && typeof MEMBERS !== 'undefined') {
+              const m = MEMBERS.find(item => item.id === parseInt(savedCvId, 10));
+              if (m) openCVModal(m);
+            }
+          } catch (e) {}
+        }, 150);
+      }
+
+      /* Listen to pageshow event for iOS Safari BFCache restore */
+      window.addEventListener('pageshow', (event) => {
+        try {
+          if (sessionStorage.getItem('swift_game_started') === 'true') {
+            if (gbIntro) gbIntro.style.display = 'none';
+            if (ls) ls.style.display = 'none';
+            if (wOverlay) wOverlay.style.display = 'none';
+            document.body.classList.remove('loading');
+            started = true;
+          }
+        } catch (e) {}
+      });
+
       /* Animated Typewriter for screen prompt */
       const promptText = '▶ ENTER YOUR NAME:';
       let pIdx = 0;
@@ -5696,6 +5768,10 @@
         playerName = raw || 'PLAYER';
         currentPlayerName = playerName;
         if (typeof updateAboutGhost === 'function') updateAboutGhost();
+        try {
+          sessionStorage.setItem('swift_game_started', 'true');
+          sessionStorage.setItem('swift_player_name', playerName);
+        } catch (e) {}
 
         /* Unlock audio */
         audioUnlocked = true;
@@ -6438,6 +6514,12 @@
         document.querySelectorAll('.nav-link').forEach((l, i) => {
           l.classList.toggle('active', sections[i] === current);
         });
+
+        try {
+          sessionStorage.setItem('swift_scroll_y', window.pageYOffset.toString());
+          sessionStorage.setItem('swift_last_section', current);
+        } catch (e) {}
+
         scrollTicking = false;
       });
     }, { passive: true });
@@ -6745,6 +6827,8 @@
         if (iframe) iframe.src = m.cv;
         if (downloadBtn) {
           downloadBtn.href = m.cv;
+          downloadBtn.setAttribute('data-cv-url', m.cv);
+          downloadBtn.setAttribute('data-member-name', m.name);
           downloadBtn.setAttribute('download', `${m.name.replace(/\s+/g, '_')}_CV.pdf`);
           downloadBtn.innerHTML = '<span class="cv-btn-icon">💾</span> DOWNLOAD CV (PDF)';
         }
@@ -6758,6 +6842,7 @@
         }
         if (downloadBtn) {
           downloadBtn.href = '#';
+          downloadBtn.removeAttribute('data-cv-url');
           downloadBtn.removeAttribute('download');
           downloadBtn.innerHTML = '<span class="cv-btn-icon">⏳</span> CV SEDANG DISIAPKAN';
         }
@@ -6767,6 +6852,11 @@
       const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = scrollbarW + 'px';
       document.body.style.overflow = 'hidden';
+
+      try {
+        sessionStorage.setItem('swift_opened_cv_member', m.id.toString());
+        sessionStorage.setItem('swift_last_section', 'inventory');
+      } catch (e) {}
 
       document.getElementById('cv-modal').classList.add('show');
     }
@@ -6778,19 +6868,73 @@
       document.body.style.paddingRight = '';
       const iframe = document.getElementById('cv-modal-iframe');
       if (iframe) iframe.src = '';
+      try { sessionStorage.removeItem('swift_opened_cv_member'); } catch (e) {}
     }
 
     const cvDlBtn = document.getElementById('cv-download-btn');
     if (cvDlBtn) {
-      cvDlBtn.addEventListener('click', (e) => {
+      cvDlBtn.addEventListener('click', async (e) => {
         initAudio();
         const href = cvDlBtn.getAttribute('href');
-        if (!href || href === '#') {
+        if (!href || href === '#' || href === '') {
           e.preventDefault();
           alert('Dokumen CV sedang disiapkan!');
           return;
         }
         sfxCvDownload();
+
+        try {
+          sessionStorage.setItem('swift_game_started', 'true');
+          sessionStorage.setItem('swift_scroll_y', window.pageYOffset.toString());
+          sessionStorage.setItem('swift_last_section', 'inventory');
+        } catch (err) {}
+
+        const cvUrl = cvDlBtn.getAttribute('data-cv-url') || href;
+        const memberName = cvDlBtn.getAttribute('data-member-name') || 'Member';
+        const filename = `${memberName.replace(/\s+/g, '_')}_CV.pdf`;
+
+        // If fetch & Blob are available, use in-page blob download
+        // This triggers the native iOS Safari download sheet without opening a new tab or leaving the page!
+        if (window.fetch && window.Blob && window.URL && window.URL.createObjectURL) {
+          e.preventDefault();
+          const originalHtml = cvDlBtn.innerHTML;
+          cvDlBtn.innerHTML = '<span class="cv-btn-icon">⏳</span> DOWNLOADING...';
+          cvDlBtn.style.pointerEvents = 'none';
+
+          try {
+            const res = await fetch(cvUrl);
+            if (!res.ok) throw new Error('Fetch failed');
+            const blob = await res.blob();
+            const octetBlob = new Blob([blob], { type: 'application/octet-stream' });
+            const blobUrl = URL.createObjectURL(octetBlob);
+
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(blobUrl);
+              cvDlBtn.innerHTML = originalHtml;
+              cvDlBtn.style.pointerEvents = '';
+            }, 1200);
+          } catch (err) {
+            // Fallback: regular link
+            cvDlBtn.innerHTML = originalHtml;
+            cvDlBtn.style.pointerEvents = '';
+            const fallback = document.createElement('a');
+            fallback.href = cvUrl;
+            fallback.download = filename;
+            fallback.target = '_blank';
+            fallback.rel = 'noopener';
+            document.body.appendChild(fallback);
+            fallback.click();
+            document.body.removeChild(fallback);
+          }
+        }
       });
     }
 
