@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Proxy Swift Ilkomerz 62</title>
   <meta name="description"
     content="Official website of Proxy Swift — Pekan Ilkomerz, Angkatan 62. A pixel art retro game experience.">
@@ -13,6 +13,11 @@
         document.documentElement.classList.add('game-already-started');
       }
     } catch (e) {}
+
+    /* Block iOS Safari native gesture zoom that causes GPU memory overflow & crashes */
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { passive: false });
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1132,9 +1137,17 @@
       inset: 0;
       width: 100%;
       height: 100%;
+      max-height: 1080px;
       pointer-events: none;
       z-index: 1;
       image-rendering: pixelated;
+    }
+
+    @media (max-width: 768px) {
+      .section-bg-canvas,
+      #pixel-trail {
+        display: none !important;
+      }
     }
 
     /* Ensure foreground content stays above the animated background canvases */
@@ -2859,50 +2872,16 @@
       color: #281B22;
     }
 
-    /* ── Gallery Toolbar (Filter & View Switcher) ── */
+    /* ── Gallery Toolbar (View Switcher) ── */
     .gallery-toolbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       flex-wrap: wrap;
       gap: 12px;
       width: 100%;
       max-width: 900px;
       margin-bottom: 20px;
-    }
-
-    .gallery-filter-group {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .gallery-filter-btn {
-      font-family: 'DotGothic16', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      color: #281B22;
-      background: #FFFFFF;
-      border: 2px solid #E04B84;
-      border-radius: 4px;
-      padding: 6px 14px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      letter-spacing: 0.5px;
-      box-shadow: 0 2px 6px rgba(224, 75, 132, 0.12);
-    }
-
-    .gallery-filter-btn:hover {
-      background: #F9E0E8;
-      color: #E04B84;
-      transform: translateY(-1px);
-    }
-
-    .gallery-filter-btn.active {
-      background: #E04B84;
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(224, 75, 132, 0.35);
     }
 
     .gallery-view-group {
@@ -3029,22 +3008,7 @@
       min-height: 38px;
     }
 
-    .polaroid-tag {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      z-index: 10;
-      background: rgba(224, 75, 132, 0.9);
-      color: #FFFFFF;
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 700;
-      font-size: 9.5px;
-      padding: 2px 7px;
-      border-radius: 3px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    }
+
 
     @media (max-width: 768px) {
       .gallery-blur-bg {
@@ -3065,10 +3029,8 @@
         gap: 14px;
       }
       .gallery-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+        justify-content: center;
       }
-      .gallery-filter-group,
       .gallery-view-group {
         justify-content: center;
       }
@@ -3167,13 +3129,14 @@
       object-fit: contain;
       display: block;
       border-radius: 4px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
       transform-origin: center center;
       touch-action: none;
       pointer-events: auto;
       user-select: none;
       -webkit-user-select: none;
       -webkit-user-drag: none;
+      will-change: transform;
     }
 
     .lightbox-img-main.smooth-transition {
@@ -5110,14 +5073,8 @@
     <h2 class="section-title">— ADVENTURE LOG —</h2>
     <p class="section-subtitle">Moments captured during Pekan Ilkomerz</p>
 
-    <!-- Gallery Toolbar: Categories & View Switcher -->
-    <div class="gallery-toolbar">
-      <div class="gallery-filter-group" id="gallery-filter-group">
-        <button class="gallery-filter-btn active" data-filter="all">ALL</button>
-        <button class="gallery-filter-btn" data-filter="pekan-ilkomerz">PEKAN ILKOMERZ</button>
-        <button class="gallery-filter-btn" data-filter="bootcamp">BOOTCAMP</button>
-        <button class="gallery-filter-btn" data-filter="forum">FORUM</button>
-      </div>
+    <!-- Gallery Toolbar: View Switcher -->
+    <div class="gallery-toolbar" style="justify-content: center;">
       <div class="gallery-view-group" id="gallery-view-group">
         <button class="gallery-view-btn active" data-view="carousel" title="Carousel Slide View">🎠 SLIDER</button>
         <button class="gallery-view-btn" data-view="grid" title="Polaroid Grid View">🎴 GRID WALL</button>
@@ -5885,6 +5842,7 @@
     /* ███ PIXEL CURSOR TRAIL & GOLDEN GLOW (HERO ONLY)███ */
     /* ════════════════════════════════════════════════════ */
     (function initPixelTrail() {
+      if (window.innerWidth <= 768) return;
       const canvas = document.getElementById('pixel-trail');
       const hero = document.getElementById('hero');
       if (!canvas || !hero) return;
@@ -6051,6 +6009,9 @@
     /* ███ INTERACTIVE SECTION BACKGROUNDS              ███ */
     /* ════════════════════════════════════════════════════ */
     (function initSectionBackgrounds() {
+      // On mobile devices, disable all background canvases to eliminate massive VRAM allocations and prevent WebKit crashes during zoom/gestures
+      if (window.innerWidth <= 768) return;
+
       const globalMouse = { x: -9999, y: -9999 };
       document.addEventListener('mousemove', (e) => {
         globalMouse.x = e.clientX;
@@ -6081,7 +6042,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = section.offsetHeight;
+          canvas.height = Math.min(section.offsetHeight, 1080);
           initMotes();
         }
 
@@ -6184,7 +6145,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = section.offsetHeight;
+          canvas.height = Math.min(section.offsetHeight, 1080);
           initOrbs();
         }
 
@@ -6280,7 +6241,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = section.offsetHeight;
+          canvas.height = Math.min(section.offsetHeight, 1080);
           initGlints();
         }
 
@@ -6364,7 +6325,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = section.offsetHeight;
+          canvas.height = Math.min(section.offsetHeight, 1080);
           initFlies();
         }
 
@@ -6949,26 +6910,9 @@
     let galleryIndex = 0;
     let galleryAutoTimer = null;
     const GALLERY_AUTO_DELAY = 4800; // 4.8 detik per slide (santai, tidak cepat-cepat)
-    let currentGalleryFilter = 'all';
     let currentGalleryView = 'carousel';
-    let filteredGallery = GALLERY;
-
-    function getCategoryLabel(cat) {
-      switch (cat) {
-        case 'pekan-ilkomerz': return 'PEKAN ILKOMERZ';
-        case 'bootcamp': return 'BOOTCAMP';
-        case 'forum': return 'FORUM';
-        default: return 'LOG';
-      }
-    }
-
-    function getFilteredGallery() {
-      if (currentGalleryFilter === 'all') return GALLERY;
-      return GALLERY.filter(item => item.category === currentGalleryFilter);
-    }
 
     function renderGallery() {
-      filteredGallery = getFilteredGallery();
       galleryIndex = 0;
 
       // 1. Render Carousel Slider Track
@@ -6976,7 +6920,7 @@
       if (track) {
         track.innerHTML = '';
         track.style.transform = 'translateX(0%)';
-        filteredGallery.forEach((item, i) => {
+        GALLERY.forEach((item, i) => {
           const div = document.createElement('div');
           div.className = 'gallery-item';
           const innerContent = item.image
@@ -6997,29 +6941,23 @@
       const grid = document.getElementById('gallery-grid');
       if (grid) {
         grid.innerHTML = '';
-        if (filteredGallery.length === 0) {
-          grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; font-family: 'DotGothic16', sans-serif; font-size: 16px; color: #8F7285;">Tidak ada foto dalam kategori ini.</div>`;
-        } else {
-          filteredGallery.forEach((item, i) => {
-            const card = document.createElement('div');
-            card.className = 'polaroid-card';
-            card.dataset.index = i;
+        GALLERY.forEach((item, i) => {
+          const card = document.createElement('div');
+          card.className = 'polaroid-card';
+          card.dataset.index = i;
 
-            const catLabel = getCategoryLabel(item.category);
-            const imgContent = item.image
-              ? `<img class="polaroid-img-main" src="${item.image}" alt="${item.caption}" loading="lazy">`
-              : `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:${item.color || '#E04B84'};color:#FFF;font-family:'Press Start 2P',monospace;font-size:0.6rem;text-align:center;padding:10px;">QUEST #${String(i+1).padStart(2,'0')}</div>`;
+          const imgContent = item.image
+            ? `<img class="polaroid-img-main" src="${item.image}" alt="${item.caption}" loading="lazy">`
+            : `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:${item.color || '#E04B84'};color:#FFF;font-family:'Press Start 2P',monospace;font-size:0.6rem;text-align:center;padding:10px;">QUEST #${String(i+1).padStart(2,'0')}</div>`;
 
-            card.innerHTML = `
-              <div class="polaroid-img-wrapper">
-                ${imgContent}
-                <span class="polaroid-tag">${catLabel}</span>
-              </div>
-              <div class="polaroid-caption">${item.caption}</div>
-            `;
-            grid.appendChild(card);
-          });
-        }
+          card.innerHTML = `
+            <div class="polaroid-img-wrapper">
+              ${imgContent}
+            </div>
+            <div class="polaroid-caption">${item.caption}</div>
+          `;
+          grid.appendChild(card);
+        });
       }
 
       updateGalleryCounter();
@@ -7037,7 +6975,7 @@
         if (controls) controls.style.display = '';
         if (counter) counter.style.display = '';
         if (grid) grid.style.display = 'none';
-        if (filteredGallery.length > 1) {
+        if (GALLERY.length > 1) {
           startGalleryAutoScroll();
         } else {
           stopGalleryAutoScroll();
@@ -7054,16 +6992,16 @@
     function updateGalleryCounter() {
       const counterEl = document.getElementById('gallery-counter');
       if (!counterEl) return;
-      if (filteredGallery.length === 0) {
+      if (GALLERY.length === 0) {
         counterEl.textContent = '00 / 00';
       } else {
         counterEl.textContent =
-          `${String(galleryIndex + 1).padStart(2, '0')} / ${String(filteredGallery.length).padStart(2, '0')}`;
+          `${String(galleryIndex + 1).padStart(2, '0')} / ${String(GALLERY.length).padStart(2, '0')}`;
       }
     }
 
     function moveGallery(dir, isAuto = false) {
-      if (currentGalleryView !== 'carousel' || filteredGallery.length <= 1) return;
+      if (currentGalleryView !== 'carousel' || GALLERY.length <= 1) return;
 
       if (!isAuto) {
         initAudio(); sfxSlide();
@@ -7071,9 +7009,9 @@
       }
 
       if (isAuto) {
-        galleryIndex = (galleryIndex + 1) % filteredGallery.length;
+        galleryIndex = (galleryIndex + 1) % GALLERY.length;
       } else {
-        galleryIndex = (galleryIndex + dir + filteredGallery.length) % filteredGallery.length;
+        galleryIndex = (galleryIndex + dir + GALLERY.length) % GALLERY.length;
       }
 
       const track = document.getElementById('gallery-track');
@@ -7085,7 +7023,7 @@
 
     function startGalleryAutoScroll() {
       stopGalleryAutoScroll();
-      if (currentGalleryView !== 'carousel' || filteredGallery.length <= 1) return;
+      if (currentGalleryView !== 'carousel' || GALLERY.length <= 1) return;
       galleryAutoTimer = setInterval(() => {
         const lb = document.getElementById('lightbox');
         if (lb && lb.classList.contains('show')) return; // Jeda jika modal foto terbuka
@@ -7102,7 +7040,7 @@
 
     function resetGalleryAutoScroll() {
       stopGalleryAutoScroll();
-      if (currentGalleryView === 'carousel' && filteredGallery.length > 1) {
+      if (currentGalleryView === 'carousel' && GALLERY.length > 1) {
         setTimeout(() => {
           startGalleryAutoScroll();
         }, 4000);
@@ -7113,19 +7051,6 @@
     const nextBtn = document.getElementById('gallery-next');
     if (prevBtn) prevBtn.addEventListener('click', () => moveGallery(-1));
     if (nextBtn) nextBtn.addEventListener('click', () => moveGallery(1));
-
-    /* Filter & View mode button listeners */
-    const galleryFilterBtns = document.querySelectorAll('.gallery-filter-btn');
-    galleryFilterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.classList.contains('active')) return;
-        initAudio(); sfxClick();
-        galleryFilterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentGalleryFilter = btn.dataset.filter;
-        renderGallery();
-      });
-    });
 
     const galleryViewBtns = document.querySelectorAll('.gallery-view-btn');
     galleryViewBtns.forEach(btn => {
@@ -7159,18 +7084,18 @@
       // Jeda auto-scroll saat kursor mouse di atas galeri
       wrapper.addEventListener('mouseenter', stopGalleryAutoScroll);
       wrapper.addEventListener('mouseleave', () => {
-        if (currentGalleryView === 'carousel' && filteredGallery.length > 1) {
+        if (currentGalleryView === 'carousel' && GALLERY.length > 1) {
           startGalleryAutoScroll();
         }
       });
 
       wrapper.addEventListener('mousedown', e => {
-        if (filteredGallery.length <= 1) return;
+        if (GALLERY.length <= 1) return;
         startX = e.clientX; dragging = true; moved = false; stopGalleryAutoScroll();
       });
       wrapper.addEventListener('touchstart', e => {
         if (e.touches.length > 1) { dragging = false; return; }
-        if (filteredGallery.length <= 1) return;
+        if (GALLERY.length <= 1) return;
         startX = e.touches[0].clientX; dragging = true; moved = false; stopGalleryAutoScroll();
       }, { passive: true });
 
@@ -7219,6 +7144,7 @@
     let lbIsPanning = false;
     let lbLastTap = 0;
     let lbImgElem = null;
+    let lbTransformRaf = null;
 
     function applyLbTransform(smooth) {
       if (!lbImgElem) return;
@@ -7227,7 +7153,7 @@
       } else {
         lbImgElem.classList.remove('smooth-transition');
       }
-      lbImgElem.style.transform = `translate(${lbTransX}px, ${lbTransY}px) scale(${lbScale})`;
+      lbImgElem.style.transform = `translate3d(${Math.round(lbTransX)}px, ${Math.round(lbTransY)}px, 0) scale(${lbScale.toFixed(3)})`;
       const wrapper = document.getElementById('lightbox-img');
       if (wrapper) {
         if (lbScale > 1.05) {
@@ -7238,7 +7164,19 @@
       }
     }
 
+    function scheduleLbTransform(smooth) {
+      if (lbTransformRaf) return;
+      lbTransformRaf = requestAnimationFrame(() => {
+        applyLbTransform(smooth);
+        lbTransformRaf = null;
+      });
+    }
+
     function resetLbZoom(smooth) {
+      if (lbTransformRaf) {
+        cancelAnimationFrame(lbTransformRaf);
+        lbTransformRaf = null;
+      }
       lbScale = 1;
       lbTransX = 0;
       lbTransY = 0;
@@ -7250,8 +7188,7 @@
       initAudio();
       sfxModalOpen();
       const lb = document.getElementById('lightbox');
-      const items = filteredGallery.length > 0 ? filteredGallery : GALLERY;
-      const item = items[idx];
+      const item = GALLERY[idx];
       if (!item) return;
 
       const lbImg = document.getElementById('lightbox-img');
@@ -7297,6 +7234,10 @@
         if (e.target === lb || e.target === closeBtn) {
           closeLightbox();
         }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
       });
 
       // Touch events (Pinch-to-zoom & Double-tap & Pan)
@@ -7351,7 +7292,7 @@
           if (lbStartDist > 0) {
             const factor = currentDist / lbStartDist;
             lbScale = Math.min(Math.max(lbStartScale * factor, 0.9), 4.0);
-            applyLbTransform(false);
+            scheduleLbTransform(false);
           }
         } else if (e.touches.length === 1 && lbIsPanning && lbScale > 1.05) {
           e.preventDefault();
@@ -7363,7 +7304,7 @@
           lbTransX = Math.max(-maxPanX, Math.min(maxPanX, lbTransX));
           lbTransY = Math.max(-maxPanY, Math.min(maxPanY, lbTransY));
 
-          applyLbTransform(false);
+          scheduleLbTransform(false);
         }
       }, { passive: false });
 
@@ -7411,7 +7352,7 @@
         if (mouseDragging && lbScale > 1.05) {
           lbTransX = e.clientX - mouseStartX;
           lbTransY = e.clientY - mouseStartY;
-          applyLbTransform(false);
+          scheduleLbTransform(false);
         }
       });
 
