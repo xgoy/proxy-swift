@@ -4859,10 +4859,6 @@
           <span>BGM</span>
           <input type="range" id="bgm-vol" min="0" max="100" value="25">
         </div>
-        <div class="audio-row">
-          <span>SFX</span>
-          <input type="range" id="sfx-vol" min="0" max="100" value="50">
-        </div>
         <button class="mute-btn" id="mute-btn">MUTE 🔊</button>
       </div>
     </div>
@@ -7073,7 +7069,6 @@
     /* ════════════════════════════════════════════════════ */
     const muteBtn = document.getElementById('mute-btn');
     const bgmVol = document.getElementById('bgm-vol');
-    const sfxVol = document.getElementById('sfx-vol');
     const soundToggleBtn = document.getElementById('sound-toggle-btn');
     const soundDropdown = document.getElementById('sound-dropdown');
 
@@ -7129,10 +7124,6 @@
       /* Use bgmGain.gain (Web Audio API) — works on iOS, unlike bgmAudio.volume */
       bgmVolLevel = sliderToVol(bgmVol.value);
       if (bgmGain) bgmGain.gain.setValueAtTime(bgmVolLevel, audioCtx.currentTime);
-    });
-    sfxVol.addEventListener('input', () => {
-      initAudio();
-      if (sfxGain) sfxGain.gain.setValueAtTime(sliderToVol(sfxVol.value), audioCtx.currentTime);
     });
 
     /* ════════════════════════════════════════════════════ */
