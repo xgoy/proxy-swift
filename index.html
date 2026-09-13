@@ -3,22 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proxy Swift Ilkomerz 62</title>
   <meta name="description"
     content="Official website of Proxy Swift — Pekan Ilkomerz, Angkatan 62. A pixel art retro game experience.">
-  <script>
-    try {
-      if (sessionStorage.getItem('swift_game_started') === 'true') {
-        document.documentElement.classList.add('game-already-started');
-      }
-    } catch (e) {}
-
-    /* Block iOS Safari native gesture zoom that causes GPU memory overflow & crashes */
-    document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
-    document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
-    document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { passive: false });
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -184,15 +172,6 @@
     #gameboy-intro.fade-out {
       opacity: 0;
       pointer-events: none;
-    }
-
-    html.game-already-started #gameboy-intro,
-    html.game-already-started #loading-screen,
-    html.game-already-started #welcome-overlay {
-      display: none !important;
-    }
-    html.game-already-started body.loading {
-      overflow: auto !important;
     }
 
     /* Starry Night Sky Background Layer (Pixel Grid + Stars) */
@@ -1137,17 +1116,9 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      max-height: 1080px;
       pointer-events: none;
       z-index: 1;
       image-rendering: pixelated;
-    }
-
-    @media (max-width: 768px) {
-      .section-bg-canvas,
-      #pixel-trail {
-        display: none !important;
-      }
     }
 
     /* Ensure foreground content stays above the animated background canvases */
@@ -1605,30 +1576,12 @@
       line-height: 1.2;
     }
 
-    .dialog-text-container {
-      display: grid;
-      position: relative;
-    }
-
-    .dialog-text-ghost {
-      grid-area: 1 / 1;
-      visibility: hidden;
-      pointer-events: none;
-      user-select: none;
-      font-family: 'DotGothic16', sans-serif;
-      font-size: 21px;
-      line-height: 1.6;
-      color: transparent;
-      word-break: break-word;
-    }
-
     .dialog-text {
-      grid-area: 1 / 1;
       font-family: 'DotGothic16', sans-serif;
       font-size: 21px;
       line-height: 1.6;
       color: #281B22;
-      word-break: break-word;
+      min-height: 100px;
     }
 
     .dialog-text .typed-cursor {
@@ -2790,16 +2743,15 @@
 
     .gallery-blur-bg {
       position: absolute;
-      inset: -20px;
-      width: calc(100% + 40px);
-      height: calc(100% + 40px);
+      inset: -15px;
+      width: calc(100% + 30px);
+      height: calc(100% + 30px);
       object-fit: cover;
-      filter: blur(8px) brightness(0.38);
-      transform: scale(1.06);
+      filter: blur(10px) brightness(0.42);
+      transform: scale(1.08);
       pointer-events: none;
       user-select: none;
       z-index: 1;
-      opacity: 0.65;
     }
 
     .gallery-img-main {
@@ -2825,8 +2777,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(24, 14, 21, 0.92);
-      backdrop-filter: blur(8px);
+      background: rgba(24, 14, 21, 0.95);
       padding: 11px 16px;
       font-family: 'DotGothic16', sans-serif;
       font-weight: 700;
@@ -2872,13 +2823,11 @@
       color: #281B22;
     }
 
-    /* ── Gallery Toolbar (View Switcher) ── */
+    /* ── Gallery View Switcher Toolbar ── */
     .gallery-toolbar {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
       width: 100%;
       max-width: 900px;
       margin-bottom: 20px;
@@ -2903,12 +2852,12 @@
       background: transparent;
       border: none;
       border-radius: 3px;
-      padding: 5px 12px;
+      padding: 5px 14px;
       cursor: pointer;
       transition: all 0.15s ease;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
     .gallery-view-btn:hover {
@@ -2973,7 +2922,13 @@
     }
 
     .polaroid-blur-bg {
-      display: none !important;
+      position: absolute;
+      inset: -10px;
+      width: calc(100% + 20px);
+      height: calc(100% + 20px);
+      object-fit: cover;
+      filter: blur(8px) brightness(0.4);
+      pointer-events: none;
     }
 
     .polaroid-img-main {
@@ -3008,18 +2963,10 @@
       min-height: 38px;
     }
 
-
-
     @media (max-width: 768px) {
-      .gallery-blur-bg {
-        display: none !important;
-      }
       .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
-      }
-      .gallery-toolbar {
-        justify-content: center;
       }
     }
 
@@ -3028,15 +2975,9 @@
         grid-template-columns: 1fr;
         gap: 14px;
       }
-      .gallery-toolbar {
-        justify-content: center;
-      }
-      .gallery-view-group {
-        justify-content: center;
-      }
     }
 
-    /* Lightbox */
+    /* ── Lightbox (Optimized Crash-Proof with Zoom & Pan) ── */
     #lightbox {
       position: fixed;
       inset: 0;
@@ -3044,11 +2985,10 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(15, 23, 42, 0.94);
+      background: rgba(10, 6, 9, 0.94);
+      cursor: default;
       padding: 16px;
-      touch-action: none;
-      -webkit-user-select: none;
-      user-select: none;
+      box-sizing: border-box;
     }
 
     #lightbox.show {
@@ -3059,15 +2999,14 @@
       width: 94vw;
       max-width: 1100px;
       height: 86vh;
+      max-height: 820px;
       border: 3.5px solid #E04B84;
       border-radius: 6px;
       display: flex;
       flex-direction: column;
-      animation: modalPop 0.2s steps(4);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-      touch-action: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       background: #150D12;
     }
 
@@ -3085,7 +3024,6 @@
       cursor: pointer;
       z-index: 20;
       line-height: 1;
-      touch-action: manipulation;
     }
 
     .lightbox-close:hover {
@@ -3099,24 +3037,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 40px;
-      color: #281B22;
-      background: radial-gradient(circle at center, #261521 0%, #120A10 100%);
+      background: #150D12;
       position: relative;
       overflow: hidden;
       padding: 12px;
       box-sizing: border-box;
       touch-action: none;
       user-select: none;
-      -webkit-user-select: none;
-    }
-
-    .lightbox-image.is-zoomed {
-      cursor: grab;
-    }
-
-    .lightbox-image.is-panning {
-      cursor: grabbing;
+      cursor: default;
     }
 
     .lightbox-img-main {
@@ -3129,23 +3057,40 @@
       object-fit: contain;
       display: block;
       border-radius: 4px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      transition: transform 0.15s ease-out;
       transform-origin: center center;
-      touch-action: none;
-      pointer-events: auto;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-user-drag: none;
-      will-change: transform;
+      cursor: zoom-in;
     }
 
-    .lightbox-img-main.smooth-transition {
-      transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+    .lightbox-img-main.zoomed {
+      cursor: grab;
+    }
+
+    .lightbox-img-main.zoomed:active {
+      cursor: grabbing;
+    }
+
+    .lightbox-zoom-hint {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      z-index: 10;
+      background: rgba(30, 18, 25, 0.88);
+      color: #FFFFFF;
+      border: 1px solid #E04B84;
+      border-radius: 4px;
+      font-family: 'DotGothic16', sans-serif;
+      font-size: 13px;
+      padding: 4px 10px;
+      pointer-events: none;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
     }
 
     .lightbox-caption-bar {
       background: #FFFFFF;
-      padding: 10px 16px 12px;
+      padding: 12px 18px;
       font-family: 'DotGothic16', sans-serif;
       font-weight: 700;
       font-size: 20px;
@@ -3154,35 +3099,6 @@
       border-top: 2.5px solid #E04B84;
       flex-shrink: 0;
       z-index: 5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .lightbox-zoom-hint {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 11px;
-      color: #E04B84;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      opacity: 0.85;
-      font-weight: 700;
-    }
-
-    @media (max-width: 520px) {
-      .lightbox-content {
-        width: 96vw;
-        height: 88vh;
-        border-width: 2.5px;
-      }
-      .lightbox-caption-bar {
-        font-size: 16px;
-        padding: 8px 12px 10px;
-      }
-      .lightbox-zoom-hint {
-        font-size: 10px;
-      }
     }
 
     /* ═══════════════════════════════════════════════════ */
@@ -4365,8 +4281,7 @@
         padding: 20px;
       }
 
-      .dialog-text,
-      .dialog-text-ghost {
+      .dialog-text {
         font-size: 19px;
       }
 
@@ -4611,9 +4526,9 @@
         padding: 16px 14px;
       }
 
-      .dialog-text,
-      .dialog-text-ghost {
+      .dialog-text {
         font-size: 16px;
+        min-height: 60px;
       }
 
       /* GALLERY */
@@ -4989,10 +4904,8 @@
           <div>
             <div class="npc-name">NARRATOR</div>
           </div>
-        <div class="dialog-text-container">
-          <div class="dialog-text-ghost" id="dialog-ghost" aria-hidden="true">Di antara sekian banyak jalan yang ditawarkan semesta, takdir menuntunmu pada kisah ini, wahai Player. Tak ada angin yang berhembus sia-sia di luasnya semesta Ilkomerz. Di balik persinggahan ini, berhimpunlah sebelas jiwa yang menamai diri mereka Swifties—diteguhkan oleh sang penuntun lentera, Naufal. Meski Kelak waktu akan memisahkan langkah mereka dan membawa masing-masing kembali pada jalannya. Namun ketika masa itu tiba, biarlah satu bulan yang singkat menjadi bukti bahwa tidak semua yang sementara akan berakhir tanpa makna. Dan ini... adalah kisah mereka. █</div>
-          <div class="dialog-text" id="dialog-text"></div>
         </div>
+        <div class="dialog-text" id="dialog-text"></div>
         <div class="dialog-indicator">▼</div>
       </div>
     </div>
@@ -5073,8 +4986,8 @@
     <h2 class="section-title">— ADVENTURE LOG —</h2>
     <p class="section-subtitle">Moments captured during Pekan Ilkomerz</p>
 
-    <!-- Gallery Toolbar: View Switcher -->
-    <div class="gallery-toolbar" style="justify-content: center;">
+    <!-- Gallery View Switcher -->
+    <div class="gallery-toolbar">
       <div class="gallery-view-group" id="gallery-view-group">
         <button class="gallery-view-btn active" data-view="carousel" title="Carousel Slide View">🎠 SLIDER</button>
         <button class="gallery-view-btn" data-view="grid" title="Polaroid Grid View">🎴 GRID WALL</button>
@@ -5099,10 +5012,7 @@
     <div class="lightbox-content">
       <button class="lightbox-close" id="lightbox-close">✕</button>
       <div class="lightbox-image" id="lightbox-img"></div>
-      <div class="lightbox-caption-bar">
-        <div id="lightbox-caption"></div>
-        <div class="lightbox-zoom-hint">🔍 Pinch / Double-Tap to Zoom</div>
-      </div>
+      <div class="lightbox-caption-bar" id="lightbox-caption"></div>
     </div>
   </div>
 
@@ -5252,14 +5162,14 @@
     ];
 
     const GALLERY = [
-      { image: 'photos/gallery1.jpeg', caption: 'Meet Your Proxy', category: 'pekan-ilkomerz' },
-      { image: 'photos/gallery2.jpeg', caption: 'Day 1 Opening Pekan Ilkomerz 62', category: 'pekan-ilkomerz' },
-      { image: 'photos/gallery3.jpeg', caption: 'Day 1 prepare the showtime force', category: 'pekan-ilkomerz' },
-      { image: 'photos/komptroopers2.jpeg', caption: 'Day 2 prepare the showtime Force', category: 'pekan-ilkomerz' },
-      { image: 'photos/forum1.jpeg', caption: 'Forum day', category: 'forum' },
-      { image: 'photos/day2.jpeg', caption: 'Day 2 Pekan Ilkomerz 62', category: 'pekan-ilkomerz' },
-      { image: 'photos/bootcamp2.jpeg', caption: 'Bootcamp IT-TODAY day 2', category: 'bootcamp' },
-      { image: 'photos/day3.jpeg', caption: 'Day 3 Pekan Ilkomerz 62', category: 'pekan-ilkomerz' },
+      { image: 'photos/gallery1.jpeg', caption: 'Meet Your Proxy' },
+      { image: 'photos/gallery2.jpeg', caption: 'Day 1 Opening Pekan Ilkomerz 62' },
+      { image: 'photos/gallery3.jpeg', caption: 'Day 1 prepare the showtime force' },
+      { image: 'photos/komptroopers2.jpeg', caption: 'Day 2 prepare the showtime Force' },
+      { image: 'photos/forum1.jpeg', caption: 'Forum day' },
+      { image: 'photos/day2.jpeg', caption: 'Day 2 Pekan Ilkomerz 62' },
+      { image: 'photos/bootcamp2.jpeg', caption: 'Bootcamp IT-TODAY day 2' },
+      { image: 'photos/day3.jpeg', caption: 'Day 3 Pekan Ilkomerz 62' },
     ];
 
     let currentPlayerName = 'PLAYER';
@@ -5555,62 +5465,6 @@
       let playerName = 'PLAYER';
       let started = false;
 
-      /* ── Session restoration (skip intro if already entered in this browser session) ── */
-      let savedStarted = false;
-      try {
-        savedStarted = sessionStorage.getItem('swift_game_started') === 'true';
-        if (savedStarted) {
-          const savedName = sessionStorage.getItem('swift_player_name');
-          if (savedName) {
-            playerName = savedName;
-            currentPlayerName = savedName;
-          }
-        }
-      } catch (e) {}
-
-      if (savedStarted) {
-        started = true;
-        if (gbIntro) gbIntro.style.display = 'none';
-        if (ls) ls.style.display = 'none';
-        if (wOverlay) wOverlay.style.display = 'none';
-        document.body.classList.remove('loading');
-        const greeting = document.getElementById('hero-greeting');
-        if (greeting) greeting.textContent = `WELCOME, ${playerName}!`;
-        if (typeof updateAboutGhost === 'function') updateAboutGhost();
-
-        /* Restore scroll position and opened CV modal if any */
-        setTimeout(() => {
-          try {
-            const savedCvId = sessionStorage.getItem('swift_opened_cv_member');
-            const savedY = sessionStorage.getItem('swift_scroll_y');
-            const savedSection = sessionStorage.getItem('swift_last_section');
-            if (savedY) {
-              window.scrollTo(0, parseInt(savedY, 10));
-            } else if (savedSection) {
-              const sec = document.getElementById(savedSection);
-              if (sec) sec.scrollIntoView();
-            }
-            if (savedCvId && typeof openCVModal === 'function' && typeof MEMBERS !== 'undefined') {
-              const m = MEMBERS.find(item => item.id === parseInt(savedCvId, 10));
-              if (m) openCVModal(m);
-            }
-          } catch (e) {}
-        }, 150);
-      }
-
-      /* Listen to pageshow event for iOS Safari BFCache restore */
-      window.addEventListener('pageshow', (event) => {
-        try {
-          if (sessionStorage.getItem('swift_game_started') === 'true') {
-            if (gbIntro) gbIntro.style.display = 'none';
-            if (ls) ls.style.display = 'none';
-            if (wOverlay) wOverlay.style.display = 'none';
-            document.body.classList.remove('loading');
-            started = true;
-          }
-        } catch (e) {}
-      });
-
       /* Animated Typewriter for screen prompt */
       const promptText = '▶ ENTER YOUR NAME:';
       let pIdx = 0;
@@ -5724,11 +5578,6 @@
         const raw = gbInput ? gbInput.value.trim().toUpperCase() : '';
         playerName = raw || 'PLAYER';
         currentPlayerName = playerName;
-        if (typeof updateAboutGhost === 'function') updateAboutGhost();
-        try {
-          sessionStorage.setItem('swift_game_started', 'true');
-          sessionStorage.setItem('swift_player_name', playerName);
-        } catch (e) {}
 
         /* Unlock audio */
         audioUnlocked = true;
@@ -5842,7 +5691,6 @@
     /* ███ PIXEL CURSOR TRAIL & GOLDEN GLOW (HERO ONLY)███ */
     /* ════════════════════════════════════════════════════ */
     (function initPixelTrail() {
-      if (window.innerWidth <= 768) return;
       const canvas = document.getElementById('pixel-trail');
       const hero = document.getElementById('hero');
       if (!canvas || !hero) return;
@@ -6009,9 +5857,6 @@
     /* ███ INTERACTIVE SECTION BACKGROUNDS              ███ */
     /* ════════════════════════════════════════════════════ */
     (function initSectionBackgrounds() {
-      // On mobile devices, disable all background canvases to eliminate massive VRAM allocations and prevent WebKit crashes during zoom/gestures
-      if (window.innerWidth <= 768) return;
-
       const globalMouse = { x: -9999, y: -9999 };
       document.addEventListener('mousemove', (e) => {
         globalMouse.x = e.clientX;
@@ -6042,7 +5887,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = Math.min(section.offsetHeight, 1080);
+          canvas.height = section.offsetHeight;
           initMotes();
         }
 
@@ -6145,7 +5990,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = Math.min(section.offsetHeight, 1080);
+          canvas.height = section.offsetHeight;
           initOrbs();
         }
 
@@ -6241,7 +6086,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = Math.min(section.offsetHeight, 1080);
+          canvas.height = section.offsetHeight;
           initGlints();
         }
 
@@ -6325,7 +6170,7 @@
 
         function resize() {
           canvas.width = section.offsetWidth;
-          canvas.height = Math.min(section.offsetHeight, 1080);
+          canvas.height = section.offsetHeight;
           initFlies();
         }
 
@@ -6475,12 +6320,6 @@
         document.querySelectorAll('.nav-link').forEach((l, i) => {
           l.classList.toggle('active', sections[i] === current);
         });
-
-        try {
-          sessionStorage.setItem('swift_scroll_y', window.pageYOffset.toString());
-          sessionStorage.setItem('swift_last_section', current);
-        } catch (e) {}
-
         scrollTicking = false;
       });
     }, { passive: true });
@@ -6507,17 +6346,9 @@
       return `Di antara sekian banyak jalan yang ditawarkan semesta, takdir menuntunmu pada kisah ini, wahai ${name}. Tak ada angin yang berhembus sia-sia di luasnya semesta Ilkomerz. Di balik persinggahan ini, berhimpunlah sebelas jiwa yang menamai diri mereka Swifties—diteguhkan oleh sang penuntun lentera, Naufal. Meski Kelak waktu akan memisahkan langkah mereka dan membawa masing-masing kembali pada jalannya. Namun ketika masa itu tiba, biarlah satu bulan yang singkat menjadi bukti bahwa tidak semua yang sementara akan berakhir tanpa makna. Dan ini... adalah kisah mereka.`;
     }
 
-    function updateAboutGhost() {
-      const ghost = document.getElementById('dialog-ghost');
-      if (ghost) {
-        ghost.textContent = getAboutDialogText() + ' █';
-      }
-    }
-
     function startTypewriter() {
       if (typewriterDone) return;
       typewriterDone = true;
-      updateAboutGhost();
       const el = document.getElementById('dialog-text');
       if (!el) return;
       const fullText = getAboutDialogText();
@@ -6788,8 +6619,6 @@
         if (iframe) iframe.src = m.cv;
         if (downloadBtn) {
           downloadBtn.href = m.cv;
-          downloadBtn.setAttribute('data-cv-url', m.cv);
-          downloadBtn.setAttribute('data-member-name', m.name);
           downloadBtn.setAttribute('download', `${m.name.replace(/\s+/g, '_')}_CV.pdf`);
           downloadBtn.innerHTML = '<span class="cv-btn-icon">💾</span> DOWNLOAD CV (PDF)';
         }
@@ -6803,7 +6632,6 @@
         }
         if (downloadBtn) {
           downloadBtn.href = '#';
-          downloadBtn.removeAttribute('data-cv-url');
           downloadBtn.removeAttribute('download');
           downloadBtn.innerHTML = '<span class="cv-btn-icon">⏳</span> CV SEDANG DISIAPKAN';
         }
@@ -6813,11 +6641,6 @@
       const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = scrollbarW + 'px';
       document.body.style.overflow = 'hidden';
-
-      try {
-        sessionStorage.setItem('swift_opened_cv_member', m.id.toString());
-        sessionStorage.setItem('swift_last_section', 'inventory');
-      } catch (e) {}
 
       document.getElementById('cv-modal').classList.add('show');
     }
@@ -6829,73 +6652,19 @@
       document.body.style.paddingRight = '';
       const iframe = document.getElementById('cv-modal-iframe');
       if (iframe) iframe.src = '';
-      try { sessionStorage.removeItem('swift_opened_cv_member'); } catch (e) {}
     }
 
     const cvDlBtn = document.getElementById('cv-download-btn');
     if (cvDlBtn) {
-      cvDlBtn.addEventListener('click', async (e) => {
+      cvDlBtn.addEventListener('click', (e) => {
         initAudio();
         const href = cvDlBtn.getAttribute('href');
-        if (!href || href === '#' || href === '') {
+        if (!href || href === '#') {
           e.preventDefault();
           alert('Dokumen CV sedang disiapkan!');
           return;
         }
         sfxCvDownload();
-
-        try {
-          sessionStorage.setItem('swift_game_started', 'true');
-          sessionStorage.setItem('swift_scroll_y', window.pageYOffset.toString());
-          sessionStorage.setItem('swift_last_section', 'inventory');
-        } catch (err) {}
-
-        const cvUrl = cvDlBtn.getAttribute('data-cv-url') || href;
-        const memberName = cvDlBtn.getAttribute('data-member-name') || 'Member';
-        const filename = `${memberName.replace(/\s+/g, '_')}_CV.pdf`;
-
-        // If fetch & Blob are available, use in-page blob download
-        // This triggers the native iOS Safari download sheet without opening a new tab or leaving the page!
-        if (window.fetch && window.Blob && window.URL && window.URL.createObjectURL) {
-          e.preventDefault();
-          const originalHtml = cvDlBtn.innerHTML;
-          cvDlBtn.innerHTML = '<span class="cv-btn-icon">⏳</span> DOWNLOADING...';
-          cvDlBtn.style.pointerEvents = 'none';
-
-          try {
-            const res = await fetch(cvUrl);
-            if (!res.ok) throw new Error('Fetch failed');
-            const blob = await res.blob();
-            const octetBlob = new Blob([blob], { type: 'application/octet-stream' });
-            const blobUrl = URL.createObjectURL(octetBlob);
-
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = blobUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-
-            setTimeout(() => {
-              document.body.removeChild(a);
-              URL.revokeObjectURL(blobUrl);
-              cvDlBtn.innerHTML = originalHtml;
-              cvDlBtn.style.pointerEvents = '';
-            }, 1200);
-          } catch (err) {
-            // Fallback: regular link
-            cvDlBtn.innerHTML = originalHtml;
-            cvDlBtn.style.pointerEvents = '';
-            const fallback = document.createElement('a');
-            fallback.href = cvUrl;
-            fallback.download = filename;
-            fallback.target = '_blank';
-            fallback.rel = 'noopener';
-            document.body.appendChild(fallback);
-            fallback.click();
-            document.body.removeChild(fallback);
-          }
-        }
       });
     }
 
@@ -6947,7 +6716,8 @@
           card.dataset.index = i;
 
           const imgContent = item.image
-            ? `<img class="polaroid-img-main" src="${item.image}" alt="${item.caption}" loading="lazy">`
+            ? `<img class="polaroid-blur-bg" src="${item.image}" alt="" aria-hidden="true" loading="lazy">
+               <img class="polaroid-img-main" src="${item.image}" alt="${item.caption}" loading="lazy">`
             : `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:${item.color || '#E04B84'};color:#FFF;font-family:'Press Start 2P',monospace;font-size:0.6rem;text-align:center;padding:10px;">QUEST #${String(i+1).padStart(2,'0')}</div>`;
 
           card.innerHTML = `
@@ -6992,12 +6762,8 @@
     function updateGalleryCounter() {
       const counterEl = document.getElementById('gallery-counter');
       if (!counterEl) return;
-      if (GALLERY.length === 0) {
-        counterEl.textContent = '00 / 00';
-      } else {
-        counterEl.textContent =
-          `${String(galleryIndex + 1).padStart(2, '0')} / ${String(GALLERY.length).padStart(2, '0')}`;
-      }
+      counterEl.textContent =
+        `${String(galleryIndex + 1).padStart(2, '0')} / ${String(GALLERY.length).padStart(2, '0')}`;
     }
 
     function moveGallery(dir, isAuto = false) {
@@ -7052,6 +6818,7 @@
     if (prevBtn) prevBtn.addEventListener('click', () => moveGallery(-1));
     if (nextBtn) nextBtn.addEventListener('click', () => moveGallery(1));
 
+    /* View mode switcher */
     const galleryViewBtns = document.querySelectorAll('.gallery-view-btn');
     galleryViewBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -7081,7 +6848,6 @@
       if (!wrapper) return;
       let startX = 0, dragging = false, moved = false;
 
-      // Jeda auto-scroll saat kursor mouse di atas galeri
       wrapper.addEventListener('mouseenter', stopGalleryAutoScroll);
       wrapper.addEventListener('mouseleave', () => {
         if (currentGalleryView === 'carousel' && GALLERY.length > 1) {
@@ -7094,16 +6860,12 @@
         startX = e.clientX; dragging = true; moved = false; stopGalleryAutoScroll();
       });
       wrapper.addEventListener('touchstart', e => {
-        if (e.touches.length > 1) { dragging = false; return; }
         if (GALLERY.length <= 1) return;
         startX = e.touches[0].clientX; dragging = true; moved = false; stopGalleryAutoScroll();
       }, { passive: true });
 
       window.addEventListener('mousemove', e => { if (dragging && Math.abs(e.clientX - startX) > 10) moved = true; });
-      window.addEventListener('touchmove', e => {
-        if (e.touches.length > 1) { dragging = false; return; }
-        if (dragging && Math.abs(e.touches[0].clientX - startX) > 10) moved = true;
-      }, { passive: true });
+      window.addEventListener('touchmove', e => { if (dragging && Math.abs(e.touches[0].clientX - startX) > 10) moved = true; }, { passive: true });
 
       function endDrag(endX) {
         if (!dragging) return;
@@ -7132,76 +6894,42 @@
     }
 
     /* ════════════════════════════════════════════════════ */
-    /* ███ LIGHTBOX & PINCH-TO-ZOOM                     ███ */
+    /* ███ LIGHTBOX (CRASH-PROOF + PINCH & PAN ZOOM)   ███ */
     /* ════════════════════════════════════════════════════ */
     let lbScale = 1;
-    let lbTransX = 0;
-    let lbTransY = 0;
-    let lbStartDist = 0;
-    let lbStartScale = 1;
-    let lbStartPanX = 0;
-    let lbStartPanY = 0;
-    let lbIsPanning = false;
-    let lbLastTap = 0;
-    let lbImgElem = null;
-    let lbTransformRaf = null;
+    let lbTranslateX = 0;
+    let lbTranslateY = 0;
 
-    function applyLbTransform(smooth) {
-      if (!lbImgElem) return;
-      if (smooth) {
-        lbImgElem.classList.add('smooth-transition');
-      } else {
-        lbImgElem.classList.remove('smooth-transition');
-      }
-      lbImgElem.style.transform = `translate3d(${Math.round(lbTransX)}px, ${Math.round(lbTransY)}px, 0) scale(${lbScale.toFixed(3)})`;
-      const wrapper = document.getElementById('lightbox-img');
-      if (wrapper) {
-        if (lbScale > 1.05) {
-          wrapper.classList.add('is-zoomed');
-        } else {
-          wrapper.classList.remove('is-zoomed');
-        }
-      }
-    }
-
-    function scheduleLbTransform(smooth) {
-      if (lbTransformRaf) return;
-      lbTransformRaf = requestAnimationFrame(() => {
-        applyLbTransform(smooth);
-        lbTransformRaf = null;
-      });
-    }
-
-    function resetLbZoom(smooth) {
-      if (lbTransformRaf) {
-        cancelAnimationFrame(lbTransformRaf);
-        lbTransformRaf = null;
-      }
+    function resetLightboxZoom() {
       lbScale = 1;
-      lbTransX = 0;
-      lbTransY = 0;
-      lbIsPanning = false;
-      applyLbTransform(smooth);
+      lbTranslateX = 0;
+      lbTranslateY = 0;
+      const mainImg = document.querySelector('.lightbox-img-main');
+      if (mainImg) {
+        mainImg.style.transform = 'translate(0px, 0px) scale(1)';
+        mainImg.classList.remove('zoomed');
+      }
     }
 
     function openLightbox(idx) {
-      initAudio();
-      sfxModalOpen();
+      initAudio(); sfxModalOpen();
       const lb = document.getElementById('lightbox');
       const item = GALLERY[idx];
       if (!item) return;
 
+      resetLightboxZoom();
+
       const lbImg = document.getElementById('lightbox-img');
       if (item.image) {
-        lbImg.style.background = 'radial-gradient(circle at center, #261521 0%, #120A10 100%)';
-        lbImg.innerHTML = `<img class="lightbox-img-main" id="lightbox-main-img" src="${item.image}" alt="${item.caption}">`;
-        lbImgElem = document.getElementById('lightbox-main-img');
+        lbImg.style.background = '#150D12';
+        lbImg.innerHTML = `
+          <img class="lightbox-img-main" src="${item.image}" alt="${item.caption}">
+          <div class="lightbox-zoom-hint">Double-tap / Pinch to Zoom 🔍</div>
+        `;
       } else {
         lbImg.style.background = item.color || '#F9E0E8';
         lbImg.innerHTML = `<span style="position:relative;z-index:2;">📷 QUEST IMAGE ${String(idx + 1).padStart(2, '0')}</span>`;
-        lbImgElem = null;
       }
-      resetLbZoom(false);
       document.getElementById('lightbox-caption').textContent = item.caption;
       lb.classList.add('show');
       document.body.style.overflow = 'hidden';
@@ -7209,169 +6937,133 @@
 
     function closeLightbox() {
       const lb = document.getElementById('lightbox');
-      if (lb && lb.classList.contains('show')) {
-        sfxModalClose();
-        lb.classList.remove('show');
-        document.body.style.overflow = '';
-        resetLbZoom(false);
-      }
+      if (!lb || !lb.classList.contains('show')) return;
+      sfxModalClose();
+      lb.classList.remove('show');
+      document.body.style.overflow = '';
+      resetLightboxZoom();
+      const lbImg = document.getElementById('lightbox-img');
+      if (lbImg) lbImg.innerHTML = '';
     }
 
-    (function setupLightbox() {
-      const lb = document.getElementById('lightbox');
-      const closeBtn = document.getElementById('lightbox-close');
-      const wrapper = document.getElementById('lightbox-img');
-      if (!lb || !wrapper) return;
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        closeLightbox();
+      }
+    });
 
-      if (closeBtn) {
-        closeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          closeLightbox();
-        });
+    /* Pinch-to-zoom, double-tap, and pan handlers on lightbox image */
+    (function setupLightboxZoom() {
+      const container = document.getElementById('lightbox-img');
+      if (!container) return;
+
+      let startDist = 0;
+      let initialScale = 1;
+      let startX = 0;
+      let startY = 0;
+      let isDragging = false;
+      let lastTapTime = 0;
+
+      function updateTransform() {
+        const img = container.querySelector('.lightbox-img-main');
+        if (!img) return;
+        if (lbScale <= 1) {
+          lbScale = 1;
+          lbTranslateX = 0;
+          lbTranslateY = 0;
+          img.classList.remove('zoomed');
+        } else {
+          img.classList.add('zoomed');
+        }
+        img.style.transform = `translate(${lbTranslateX}px, ${lbTranslateY}px) scale(${lbScale})`;
       }
 
-      lb.addEventListener('click', (e) => {
-        if (e.target === lb || e.target === closeBtn) {
-          closeLightbox();
+      // Double-tap or double-click to toggle zoom 1x / 2.2x
+      container.addEventListener('click', (e) => {
+        const img = container.querySelector('.lightbox-img-main');
+        if (!img || e.target !== img) return;
+        const now = Date.now();
+        if (now - lastTapTime < 320) {
+          if (lbScale > 1) {
+            lbScale = 1;
+            lbTranslateX = 0;
+            lbTranslateY = 0;
+          } else {
+            lbScale = 2.2;
+          }
+          updateTransform();
+          lastTapTime = 0;
+        } else {
+          lastTapTime = now;
         }
       });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeLightbox();
-      });
-
-      // Touch events (Pinch-to-zoom & Double-tap & Pan)
-      wrapper.addEventListener('touchstart', (e) => {
-        if (!lbImgElem) return;
-
+      // Touch handlers: pinch to zoom & 1-finger pan
+      container.addEventListener('touchstart', (e) => {
         if (e.touches.length === 2) {
-          e.preventDefault();
-          lbStartDist = Math.hypot(
+          startDist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
-          lbStartScale = lbScale;
-          lbIsPanning = false;
-        } else if (e.touches.length === 1) {
-          const now = Date.now();
-          if (now - lbLastTap < 320) {
-            e.preventDefault();
-            if (lbScale > 1.1) {
-              resetLbZoom(true);
-            } else {
-              lbScale = 2.4;
-              const rect = wrapper.getBoundingClientRect();
-              const touchX = e.touches[0].clientX - (rect.left + rect.width / 2);
-              const touchY = e.touches[0].clientY - (rect.top + rect.height / 2);
-              lbTransX = -touchX * 0.7;
-              lbTransY = -touchY * 0.7;
-              applyLbTransform(true);
-            }
-            lbLastTap = 0;
-            return;
-          }
-          lbLastTap = now;
-
-          if (lbScale > 1.05) {
-            lbIsPanning = true;
-            lbStartPanX = e.touches[0].clientX - lbTransX;
-            lbStartPanY = e.touches[0].clientY - lbTransY;
-          }
+          initialScale = lbScale;
+        } else if (e.touches.length === 1 && lbScale > 1) {
+          isDragging = true;
+          startX = e.touches[0].clientX - lbTranslateX;
+          startY = e.touches[0].clientY - lbTranslateY;
         }
       }, { passive: false });
 
-      wrapper.addEventListener('touchmove', (e) => {
-        if (!lbImgElem) return;
-
+      container.addEventListener('touchmove', (e) => {
         if (e.touches.length === 2) {
           e.preventDefault();
-          const currentDist = Math.hypot(
+          const dist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
-          if (lbStartDist > 0) {
-            const factor = currentDist / lbStartDist;
-            lbScale = Math.min(Math.max(lbStartScale * factor, 0.9), 4.0);
-            scheduleLbTransform(false);
+          if (startDist > 0) {
+            lbScale = Math.min(Math.max(1, initialScale * (dist / startDist)), 3.5);
+            updateTransform();
           }
-        } else if (e.touches.length === 1 && lbIsPanning && lbScale > 1.05) {
+        } else if (e.touches.length === 1 && isDragging && lbScale > 1) {
           e.preventDefault();
-          lbTransX = e.touches[0].clientX - lbStartPanX;
-          lbTransY = e.touches[0].clientY - lbStartPanY;
-
-          const maxPanX = (wrapper.clientWidth * (lbScale - 1)) / 2 + 60;
-          const maxPanY = (wrapper.clientHeight * (lbScale - 1)) / 2 + 60;
-          lbTransX = Math.max(-maxPanX, Math.min(maxPanX, lbTransX));
-          lbTransY = Math.max(-maxPanY, Math.min(maxPanY, lbTransY));
-
-          scheduleLbTransform(false);
+          lbTranslateX = e.touches[0].clientX - startX;
+          lbTranslateY = e.touches[0].clientY - startY;
+          updateTransform();
         }
       }, { passive: false });
 
-      wrapper.addEventListener('touchend', (e) => {
-        if (!lbImgElem) return;
-        if (e.touches.length < 2 && lbScale < 1.05) {
-          resetLbZoom(true);
-        } else if (e.touches.length === 0) {
-          lbIsPanning = false;
+      container.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) startDist = 0;
+        if (e.touches.length === 0) isDragging = false;
+        if (lbScale < 1.05) {
+          lbScale = 1;
+          lbTranslateX = 0;
+          lbTranslateY = 0;
+          updateTransform();
         }
       });
 
-      // Desktop wheel zoom
-      wrapper.addEventListener('wheel', (e) => {
-        if (!lbImgElem) return;
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 0.25 : -0.25;
-        const newScale = Math.min(Math.max(lbScale + delta, 1), 4);
-        if (newScale !== lbScale) {
-          lbScale = newScale;
-          if (lbScale === 1) {
-            lbTransX = 0;
-            lbTransY = 0;
-          }
-          applyLbTransform(true);
-        }
-      }, { passive: false });
-
-      // Desktop mouse drag to pan
-      let mouseDragging = false;
-      let mouseStartX = 0;
-      let mouseStartY = 0;
-
-      wrapper.addEventListener('mousedown', (e) => {
-        if (lbScale > 1.05 && e.button === 0) {
+      // Desktop mouse drag when zoomed
+      container.addEventListener('mousedown', (e) => {
+        if (lbScale > 1 && e.target.classList.contains('lightbox-img-main')) {
+          isDragging = true;
+          startX = e.clientX - lbTranslateX;
+          startY = e.clientY - lbTranslateY;
           e.preventDefault();
-          mouseDragging = true;
-          mouseStartX = e.clientX - lbTransX;
-          mouseStartY = e.clientY - lbTransY;
-          wrapper.classList.add('is-panning');
         }
       });
 
       window.addEventListener('mousemove', (e) => {
-        if (mouseDragging && lbScale > 1.05) {
-          lbTransX = e.clientX - mouseStartX;
-          lbTransY = e.clientY - mouseStartY;
-          scheduleLbTransform(false);
+        if (isDragging && lbScale > 1) {
+          lbTranslateX = e.clientX - startX;
+          lbTranslateY = e.clientY - startY;
+          updateTransform();
         }
       });
 
       window.addEventListener('mouseup', () => {
-        if (mouseDragging) {
-          mouseDragging = false;
-          wrapper.classList.remove('is-panning');
-        }
-      });
-
-      // Desktop double click to toggle zoom
-      wrapper.addEventListener('dblclick', (e) => {
-        if (e.target.closest('.lightbox-close')) return;
-        if (lbScale > 1.1) {
-          resetLbZoom(true);
-        } else {
-          lbScale = 2.4;
-          applyLbTransform(true);
-        }
+        isDragging = false;
       });
     })();
 
@@ -7464,7 +7156,6 @@
     renderMembers();
     renderInventory();
     renderGallery();
-    updateAboutGhost();
   </script>
 
   <!-- ═══════════════════════════════════════════════════ -->
