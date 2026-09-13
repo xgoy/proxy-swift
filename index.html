@@ -8,9 +8,13 @@
   <meta name="description"
     content="Official website of Proxy Swift — Pekan Ilkomerz, Angkatan 62. A pixel art retro game experience.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=DotGothic16&family=Plus+Jakarta+Sans:wght@700;800&family=Press+Start+2P&family=VT323&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=DotGothic16&family=Plus+Jakarta+Sans:wght@700;800&family=Press+Start+2P&family=VT323&display=swap"
+    rel="stylesheet"></noscript>
   <link rel="stylesheet" href="fonts/stylesheet.css">
   <style>
     /* ═══════════════════════════════════════════════════ */
@@ -2743,8 +2747,8 @@
       width: calc(100% + 40px);
       height: calc(100% + 40px);
       object-fit: cover;
-      filter: blur(24px) brightness(0.42);
-      transform: scale(1.12);
+      filter: blur(14px) brightness(0.42);
+      transform: scale(1.12) translateZ(0);
       pointer-events: none;
       user-select: none;
       z-index: 1;
@@ -2960,7 +2964,8 @@
       width: calc(100% + 20px);
       height: calc(100% + 20px);
       object-fit: cover;
-      filter: blur(16px) brightness(0.4);
+      filter: blur(12px) brightness(0.4);
+      transform: translateZ(0);
       pointer-events: none;
     }
 
@@ -3112,8 +3117,8 @@
       width: calc(100% + 40px);
       height: calc(100% + 40px);
       object-fit: cover;
-      filter: blur(28px) brightness(0.35);
-      transform: scale(1.1);
+      filter: blur(16px) brightness(0.35);
+      transform: scale(1.1) translateZ(0);
       pointer-events: none;
       z-index: 1;
     }
@@ -4942,7 +4947,7 @@
         <div class="dialog-corners-bottom"></div>
         <div class="dialog-header">
           <div class="npc-avatar">
-            <img src="photos/narrator.png" alt="Narrator" class="npc-avatar-img">
+            <img src="photos/narrator.jpeg" alt="Narrator" class="npc-avatar-img">
           </div>
           <div>
             <div class="npc-name">NARRATOR</div>
@@ -5196,8 +5201,8 @@
     /* ███ DATA                                        ███ */
     /* ════════════════════════════════════════════════════ */
     const MEMBERS = [
-      { id: 1, name: "NAUFAL RIZKI RIYADI", role: "PJK", birthDate: "03 Nov 2005", city: "Jakarta", nim: "M0403241069", funFact: "Fun fact loading...", hobbies: "Masak", track: "SNBP", ig: "https://www.instagram.com/naufalrydi", li: "https://www.linkedin.com/in/naufal-rizki-riyadi-116908223?utm_source=share_via&utm_content=profile&utm_medium=member_ios", photo: "photos/naufal.png", isPJ: true, favQuote: "We accept the love we think we deserve" },
-      { id: 2, name: "DANDHY SURYA KUSUMA ATMAJA", role: "Member", birthDate: "06 Nov 2006", city: "Kabupaten Kuningan", nim: "M0403251143", funFact: "Fun fact loading...", hobbies: "Makan", track: "SNBT", ig: "https://www.instagram.com/kusumadandhy", li: "https://www.linkedin.com/in/dandhy-surya-kusuma-atmaja-75b095383", photo: "photos/dandhy.PNG", isPJ: false, favQuote: "Tetaplah Berbuat Baik, Walau Tidak di Perlakukan Baik" },
+      { id: 1, name: "NAUFAL RIZKI RIYADI", role: "PJK", birthDate: "03 Nov 2005", city: "Jakarta", nim: "M0403241069", funFact: "Fun fact loading...", hobbies: "Masak", track: "SNBP", ig: "https://www.instagram.com/naufalrydi", li: "https://www.linkedin.com/in/naufal-rizki-riyadi-116908223?utm_source=share_via&utm_content=profile&utm_medium=member_ios", photo: "photos/naufal.jpeg", isPJ: true, favQuote: "We accept the love we think we deserve" },
+      { id: 2, name: "DANDHY SURYA KUSUMA ATMAJA", role: "Member", birthDate: "06 Nov 2006", city: "Kabupaten Kuningan", nim: "M0403251143", funFact: "Fun fact loading...", hobbies: "Makan", track: "SNBT", ig: "https://www.instagram.com/kusumadandhy", li: "https://www.linkedin.com/in/dandhy-surya-kusuma-atmaja-75b095383", photo: "photos/dandhy.jpeg", isPJ: false, favQuote: "Tetaplah Berbuat Baik, Walau Tidak di Perlakukan Baik" },
       { id: 3, name: "NINA SALAMAH", role: "Member", birthDate: "14 Apr 2007", city: "Kalimantan Selatan", nim: "M0403251146", funFact: "Fun fact loading...", hobbies: "Art, Photography, Sports", track: "SNBP", ig: "https://www.instagram.com/ninaslmhhh14", li: "https://www.linkedin.com/in/nina-salamah-a34248382", photo: "photos/nina.jpeg", cv: "cv/CV NINA SALAMAH (Sep 2026).pdf", isPJ: false, favQuote: "Life goes on<br>-BTS" },
       { id: 4, name: "MUHAMMAD DARAZI", role: "Member", birthDate: "01 Apr 2007", city: "Tamiang Layang", nim: "M0403251147", funFact: "Fun fact loading...", hobbies: "Membaca", track: "SNBT", ig: "https://www.instagram.com/isyaratji11", li: "https://www.linkedin.com/in/muhammad-darazi-60b47b411?utm_source=share_via&utm_content=profile&utm_medium=member_android", photo: "photos/darazi.jpeg", cv: "cv/darazi.pdf", isPJ: false, favQuote: "Jangan mengukur jalannya pekerjaan dengan apa yang telah kamu mulai, tetapi dengan apa yang telah kamu selesaikan.<br>– Socrates" },
       { id: 5, name: "CICI AMALIA DIN", role: "Member", birthDate: "30 Jun 2007", city: "Kalimantan Selatan", nim: "M0403251148", funFact: "Fun fact loading...", hobbies: "Sleep, tidur, bobo, memejamkan mata", track: "Mandiri", ig: "https://www.instagram.com/ciophile_", li: "https://www.linkedin.com/in/cici-amalia-din", photo: "photos/cici2.png", cv: "cv/cici.pdf", isPJ: false, favQuote: "Just do it" },
@@ -5658,7 +5663,7 @@
       /* Generate Starry Night Sky Stars */
       const starContainer = document.getElementById('gb-night-stars');
       if (starContainer) {
-        const starCount = 65;
+        const starCount = 35;
         for (let i = 0; i < starCount; i++) {
           const star = document.createElement('div');
           const isDiamond = i % 14 === 0;
@@ -5694,7 +5699,7 @@
     /* ════════════════════════════════════════════════════ */
     (function generateStars() {
       const c = document.getElementById('stars-container');
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 20; i++) {
         const s = document.createElement('div');
         s.className = 'star';
         s.style.left = Math.random() * 100 + '%';
@@ -5716,7 +5721,7 @@
     /* plus */       '0 -3px 0 0 currentColor, 0 3px 0 0 currentColor, -3px 0 0 0 currentColor, 3px 0 0 0 currentColor',
     /* 2×2 */        '3px 0 0 0 currentColor, 0 3px 0 0 currentColor, 3px 3px 0 0 currentColor',
       ];
-      for (let i = 0; i < 22; i++) {
+      for (let i = 0; i < 12; i++) {
         const sp = document.createElement('div');
         sp.className = 'pixel-spark';
         const dur = (1.4 + Math.random() * 2.8).toFixed(2) + 's';
@@ -5872,7 +5877,8 @@
           p.alpha -= p.decay;
 
           if (p.alpha <= 0 || p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
-            particles.splice(i, 1);
+            particles[i] = particles[particles.length - 1];
+            particles.pop();
             continue;
           }
 
@@ -5893,7 +5899,11 @@
         }
       }
 
-      window.addEventListener('resize', resize);
+      let ptResizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(ptResizeTimer);
+        ptResizeTimer = setTimeout(resize, 250);
+      });
       resize();
     })();
 
@@ -5906,6 +5916,16 @@
         globalMouse.x = e.clientX;
         globalMouse.y = e.clientY;
       }, { passive: true });
+
+      /* Shared debounced resize — all canvas resizers register here */
+      const resizeCallbacks = [];
+      let resizeDebounceTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeDebounceTimer);
+        resizeDebounceTimer = setTimeout(() => {
+          resizeCallbacks.forEach(fn => fn());
+        }, 250);
+      });
 
       // 1. ABOUT SECTION — Floating Mana Runes & Wisps
       (function initAboutCanvas() {
@@ -5927,7 +5947,7 @@
 
         function initMotes() {
           motes = [];
-          const count = Math.min(Math.floor(canvas.width / 42), 26);
+          const count = Math.min(Math.floor(canvas.width / 65), 14);
           for (let i = 0; i < count; i++) {
             motes.push({
               x: Math.random() * canvas.width,
@@ -5944,8 +5964,11 @@
           }
         }
 
-        function draw() {
+        let lastFrameTime = 0;
+        function draw(timestamp) {
           if (!isVisible) { rafId = null; return; }
+          if (timestamp - lastFrameTime < 33) { rafId = requestAnimationFrame(draw); return; }
+          lastFrameTime = timestamp;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           const rect = section.getBoundingClientRect();
@@ -6004,7 +6027,7 @@
         }, { threshold: 0.05 });
         obs.observe(section);
 
-        window.addEventListener('resize', resize);
+        resizeCallbacks.push(resize);
         resize();
       })();
 
@@ -6027,7 +6050,7 @@
 
         function initOrbs() {
           orbs = [];
-          const count = Math.min(Math.floor(canvas.width / 38), 30);
+          const count = Math.min(Math.floor(canvas.width / 60), 15);
           for (let i = 0; i < count; i++) {
             orbs.push({
               x: Math.random() * canvas.width,
@@ -6042,8 +6065,11 @@
           }
         }
 
-        function draw() {
+        let lastFrameTime = 0;
+        function draw(timestamp) {
           if (!isVisible) { rafId = null; return; }
+          if (timestamp - lastFrameTime < 33) { rafId = requestAnimationFrame(draw); return; }
+          lastFrameTime = timestamp;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           const rect = section.getBoundingClientRect();
@@ -6097,7 +6123,7 @@
         }, { threshold: 0.05 });
         obs.observe(section);
 
-        window.addEventListener('resize', resize);
+        resizeCallbacks.push(resize);
         resize();
       })();
 
@@ -6120,7 +6146,7 @@
 
         function initGlints() {
           glints = [];
-          const count = Math.min(Math.floor(canvas.width / 46), 24);
+          const count = Math.min(Math.floor(canvas.width / 70), 13);
           for (let i = 0; i < count; i++) {
             glints.push({
               x: Math.random() * canvas.width,
@@ -6135,8 +6161,11 @@
           }
         }
 
-        function draw() {
+        let lastFrameTime = 0;
+        function draw(timestamp) {
           if (!isVisible) { rafId = null; return; }
+          if (timestamp - lastFrameTime < 33) { rafId = requestAnimationFrame(draw); return; }
+          lastFrameTime = timestamp;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           glints.forEach(g => {
@@ -6178,7 +6207,7 @@
         }, { threshold: 0.05 });
         obs.observe(section);
 
-        window.addEventListener('resize', resize);
+        resizeCallbacks.push(resize);
         resize();
       })();
 
@@ -6201,7 +6230,7 @@
 
         function initFlies() {
           flies = [];
-          const count = Math.min(Math.floor(canvas.width / 42), 26);
+          const count = Math.min(Math.floor(canvas.width / 65), 14);
           for (let i = 0; i < count; i++) {
             flies.push({
               x: Math.random() * canvas.width,
@@ -6216,8 +6245,11 @@
           }
         }
 
-        function draw() {
+        let lastFrameTime = 0;
+        function draw(timestamp) {
           if (!isVisible) { rafId = null; return; }
+          if (timestamp - lastFrameTime < 33) { rafId = requestAnimationFrame(draw); return; }
+          lastFrameTime = timestamp;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           const rect = section.getBoundingClientRect();
@@ -6275,7 +6307,7 @@
         }, { threshold: 0.05 });
         obs.observe(section);
 
-        window.addEventListener('resize', resize);
+        resizeCallbacks.push(resize);
         resize();
       })();
     })();
@@ -6320,26 +6352,31 @@
       tick();
     }
 
-    /* Active section highlight on scroll */
+    /* Active section highlight on scroll (throttled for performance) */
+    let scrollTicking = false;
     window.addEventListener('scroll', () => {
-      if (isProgrammaticScroll) return;
-      const sections = ['hero', 'about', 'members', 'inventory', 'gallery', 'bulletin'];
-      const scrollY = window.pageYOffset + 200;
-      let current = 'hero';
+      if (isProgrammaticScroll || scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        const sections = ['hero', 'about', 'members', 'inventory', 'gallery', 'bulletin'];
+        const scrollY = window.pageYOffset + 200;
+        let current = 'hero';
 
-      if (window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight - 60) {
-        current = 'bulletin';
-      } else {
-        sections.forEach(s => {
-          const el = document.getElementById(s);
-          if (el && el.offsetTop <= scrollY) current = s;
+        if (window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight - 60) {
+          current = 'bulletin';
+        } else {
+          sections.forEach(s => {
+            const el = document.getElementById(s);
+            if (el && el.offsetTop <= scrollY) current = s;
+          });
+        }
+
+        document.querySelectorAll('.nav-link').forEach((l, i) => {
+          l.classList.toggle('active', sections[i] === current);
         });
-      }
-
-      document.querySelectorAll('.nav-link').forEach((l, i) => {
-        l.classList.toggle('active', sections[i] === current);
+        scrollTicking = false;
       });
-    });
+    }, { passive: true });
 
     /* ════════════════════════════════════════════════════ */
     /* ███ EASTER EGG                                  ███ */
@@ -6406,6 +6443,18 @@
     }, { threshold: 0.3 });
     aboutObserver.observe(document.getElementById('about'));
 
+    /* Pause hero CSS animations when off-screen to save GPU cycles */
+    const heroEl = document.getElementById('hero');
+    if (heroEl) {
+      const heroObs = new IntersectionObserver((entries) => {
+        const state = entries[0].isIntersecting ? 'running' : 'paused';
+        heroEl.querySelectorAll('.gb-star, .star, .pixel-spark, .gb-shooting-star').forEach(el => {
+          el.style.animationPlayState = state;
+        });
+      }, { threshold: 0.01 });
+      heroObs.observe(heroEl);
+    }
+
     /* ════════════════════════════════════════════════════ */
     /* ███ MEMBERS — CHARACTER SELECT                  ███ */
     /* ════════════════════════════════════════════════════ */
@@ -6421,7 +6470,7 @@
       }
 
       const avatarMarkup = m.photo
-        ? `<img src="${m.photo}" alt="${m.name}" onerror="this.parentElement.textContent='${AVATARS[m.id - 1] || '🎮'}'">`
+        ? `<img src="${m.photo}" alt="${m.name}" loading="lazy" onerror="this.parentElement.textContent='${AVATARS[m.id - 1] || '🎮'}'">`
         : (AVATARS[m.id - 1] || '🎮');
 
       const card = document.createElement('div');
@@ -6715,8 +6764,8 @@
           const div = document.createElement('div');
           div.className = 'gallery-item';
           const innerContent = item.image
-            ? `<img class="gallery-blur-bg" src="${item.image}" alt="" aria-hidden="true">
-          <img class="gallery-img-main" src="${item.image}" alt="${item.caption}">`
+            ? `<img class="gallery-blur-bg" src="${item.image}" alt="" aria-hidden="true" loading="lazy">
+          <img class="gallery-img-main" src="${item.image}" alt="${item.caption}" loading="lazy">`
             : `<span style="position:relative;z-index:2;">📷 QUEST IMAGE ${String(i + 1).padStart(2, '0')}</span>`;
           div.innerHTML = `
         <div class="gallery-image" style="background:${item.image ? '#180E15' : (item.color || '#E04B84')}" data-index="${i}">
@@ -6742,8 +6791,8 @@
 
             const catLabel = getCategoryLabel(item.category);
             const imgContent = item.image
-              ? `<img class="polaroid-blur-bg" src="${item.image}" alt="" aria-hidden="true">
-                 <img class="polaroid-img-main" src="${item.image}" alt="${item.caption}">`
+              ? `<img class="polaroid-blur-bg" src="${item.image}" alt="" aria-hidden="true" loading="lazy">
+                 <img class="polaroid-img-main" src="${item.image}" alt="${item.caption}" loading="lazy">`
               : `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:${item.color || '#E04B84'};color:#FFF;font-family:'Press Start 2P',monospace;font-size:0.6rem;text-align:center;padding:10px;">QUEST #${String(i+1).padStart(2,'0')}</div>`;
 
             card.innerHTML = `
