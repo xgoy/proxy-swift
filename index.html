@@ -1576,12 +1576,30 @@
       line-height: 1.2;
     }
 
+    .dialog-text-container {
+      display: grid;
+      position: relative;
+    }
+
+    .dialog-text-ghost {
+      grid-area: 1 / 1;
+      visibility: hidden;
+      pointer-events: none;
+      user-select: none;
+      font-family: 'DotGothic16', sans-serif;
+      font-size: 21px;
+      line-height: 1.6;
+      color: transparent;
+      word-break: break-word;
+    }
+
     .dialog-text {
+      grid-area: 1 / 1;
       font-family: 'DotGothic16', sans-serif;
       font-size: 21px;
       line-height: 1.6;
       color: #281B22;
-      min-height: 100px;
+      word-break: break-word;
     }
 
     .dialog-text .typed-cursor {
@@ -4329,7 +4347,8 @@
         padding: 20px;
       }
 
-      .dialog-text {
+      .dialog-text,
+      .dialog-text-ghost {
         font-size: 19px;
       }
 
@@ -4574,9 +4593,9 @@
         padding: 16px 14px;
       }
 
-      .dialog-text {
+      .dialog-text,
+      .dialog-text-ghost {
         font-size: 16px;
-        min-height: 60px;
       }
 
       /* GALLERY */
@@ -4952,8 +4971,10 @@
           <div>
             <div class="npc-name">NARRATOR</div>
           </div>
+        <div class="dialog-text-container">
+          <div class="dialog-text-ghost" id="dialog-ghost" aria-hidden="true">Di antara sekian banyak jalan yang ditawarkan semesta, takdir menuntunmu pada kisah ini, wahai Player. Tak ada angin yang berhembus sia-sia di luasnya semesta Ilkomerz. Di balik persinggahan ini, berhimpunlah sebelas jiwa yang menamai diri mereka Swifties—diteguhkan oleh sang penuntun lentera, Naufal. Meski Kelak waktu akan memisahkan langkah mereka dan membawa masing-masing kembali pada jalannya. Namun ketika masa itu tiba, biarlah satu bulan yang singkat menjadi bukti bahwa tidak semua yang sementara akan berakhir tanpa makna. Dan ini... adalah kisah mereka. █</div>
+          <div class="dialog-text" id="dialog-text"></div>
         </div>
-        <div class="dialog-text" id="dialog-text"></div>
         <div class="dialog-indicator">▼</div>
       </div>
     </div>
@@ -5632,6 +5653,7 @@
         const raw = gbInput ? gbInput.value.trim().toUpperCase() : '';
         playerName = raw || 'PLAYER';
         currentPlayerName = playerName;
+        if (typeof updateAboutGhost === 'function') updateAboutGhost();
 
         /* Unlock audio */
         audioUnlocked = true;
@@ -6400,9 +6422,17 @@
       return `Di antara sekian banyak jalan yang ditawarkan semesta, takdir menuntunmu pada kisah ini, wahai ${name}. Tak ada angin yang berhembus sia-sia di luasnya semesta Ilkomerz. Di balik persinggahan ini, berhimpunlah sebelas jiwa yang menamai diri mereka Swifties—diteguhkan oleh sang penuntun lentera, Naufal. Meski Kelak waktu akan memisahkan langkah mereka dan membawa masing-masing kembali pada jalannya. Namun ketika masa itu tiba, biarlah satu bulan yang singkat menjadi bukti bahwa tidak semua yang sementara akan berakhir tanpa makna. Dan ini... adalah kisah mereka.`;
     }
 
+    function updateAboutGhost() {
+      const ghost = document.getElementById('dialog-ghost');
+      if (ghost) {
+        ghost.textContent = getAboutDialogText() + ' █';
+      }
+    }
+
     function startTypewriter() {
       if (typewriterDone) return;
       typewriterDone = true;
+      updateAboutGhost();
       const el = document.getElementById('dialog-text');
       if (!el) return;
       const fullText = getAboutDialogText();
@@ -7107,6 +7137,7 @@
     renderMembers();
     renderInventory();
     renderGallery();
+    updateAboutGhost();
   </script>
 
   <!-- ═══════════════════════════════════════════════════ -->
