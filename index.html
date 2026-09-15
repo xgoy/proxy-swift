@@ -22,65 +22,10 @@
     /* ███ CSS VARIABLES                              ███ */
     /* ═══════════════════════════════════════════════════ */
     :root {
-      /* Cozy Dimmed Strawberry Ice Cream Theme (Anti-Glare Tone) */
-      --straw-syrup: #E04B84;
-      /* Rich Cozy Strawberry Syrup Accent */
-      --straw-syrup-hover: #B83265;
-      /* Deep Strawberry Syrup Hover */
-      --straw-milk: #F093B7;
-      /* Soft Cozy Strawberry Milkshake (Hero Background) */
-      --straw-gelato: #F4B3C7;
-      /* Muted Strawberry Gelato (Section Alternating Background) */
-      --straw-cream: #F9E0E8;
-      /* Soft Cozy Strawberry Cream (Section Alternating Background) */
-      --straw-border: #E87BA8;
-      /* Muted Strawberry Border Accent */
-
-      --pink-vibrant: #E04B84;
-      --pink-medium: #F093B7;
-      --pink-pastel: #F4B3C7;
-      --pink-blush: #F9E0E8;
-
       --pink-main: #E04B84;
       --pink-dark: #B83265;
-      --pink-hero: #F093B7;
-      --pink-soft: #F9E0E8;
-      --pink-border: #E87BA8;
-      --pink-shadow: rgba(224, 75, 132, 0.16);
-
-      --red: #E04B84;
-      --red-dark: #B83265;
-      --red-bright: #F093B7;
-
       --bg-paper: #F9E0E8;
-      --bg-card: #FFFFFF;
-      --bg-white: #FFFFFF;
-      --bg-cream: #F9E0E8;
-      --bg-cream-alt: #F9E0E8;
-      --bg-section-alt: #F9E0E8;
-      --bg-section-pink: #F4B3C7;
-
       --text-dark: #281B22;
-      /* Rich Deep Dark Berry Charcoal — anti-glare contrast! */
-      --text-body: #281B22;
-      --text-sub: #45313C;
-      --text-muted: #664D5B;
-      --text-on-btn: #FFFFFF;
-
-      --gold: #F59E0B;
-      --gold-dark: #D97706;
-      --yellow: #F59E0B;
-      --yellow-dim: #D97706;
-
-      --indigo: #F9E0E8;
-      --indigo-dark: #F9E0E8;
-      --indigo-darker: #F4B3C7;
-      --indigo-card: #FFFFFF;
-
-      --white: #FFFFFF;
-      --text-dim: #664D5B;
-      --skin: #FFCC99;
-      --pixel: 4px;
     }
 
     /* ═══════════════════════════════════════════════════ */
@@ -717,17 +662,6 @@
       }
     }
 
-    /* ═══════════════════════════════════════════════════ */
-    /* ═══════════════════════════════════════════════════ */
-    /* ███ WELCOME OVERLAY                            ███ */
-    /* ═══════════════════════════════════════════════════ */
-    /* ═══════════════════════════════════════════════════ */
-    /* ═══════════════════════════════════════════════════ */
-    /* ███ WELCOME OVERLAY                            ███ */
-    /* ═══════════════════════════════════════════════════ */
-    /* ═══════════════════════════════════════════════════ */
-    /* ███ WELCOME OVERLAY                            ███ */
-    /* ═══════════════════════════════════════════════════ */
     /* ═══════════════════════════════════════════════════ */
     /* ███ WELCOME OVERLAY                            ███ */
     /* ═══════════════════════════════════════════════════ */
@@ -5181,7 +5115,6 @@
     let masterGain = null;
     let sfxGain = null;
     let isMuted = false;
-    let audioUnlocked = false;
 
     let sfxFilter = null;
 
@@ -5439,11 +5372,6 @@
       bgmAudio.play().catch(() => { }); /* catch autoplay block gracefully */
     }
 
-    function stopBGM() {
-      bgmAudio.pause();
-      bgmAudio.currentTime = 8.5;
-    }
-
     /* ════════════════════════════════════════════════════ */
     /* ███ GAMEBOY INTRO + LOADING SCREEN              ███ */
     /* ════════════════════════════════════════════════════ */
@@ -5578,7 +5506,6 @@
         currentPlayerName = playerName;
 
         /* Unlock audio */
-        audioUnlocked = true;
         initAudio();
         sfxStartGame();
 
@@ -7262,16 +7189,6 @@
       return getMyBulletinReplies().includes(key);
     }
 
-    /* ── Sanitize: hapus semua HTML tag, cegah XSS ── */
-    function sanitizeText(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML /* encode HTML entities */
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .trim();
-    }
-
     /* ── Profanity filter ── */
     function filterProfanity(str) {
       let result = str;
@@ -7280,16 +7197,6 @@
         result = result.replace(re, '*'.repeat(w.length));
       });
       return result;
-    }
-
-    /* ── Count words (accurate non-whitespace matching) ── */
-    function getWords(str) {
-      if (!str) return [];
-      return str.trim().match(/\S+/g) || [];
-    }
-
-    function countWords(str) {
-      return getWords(str).length;
     }
 
     /* ── Format timestamp ── */
